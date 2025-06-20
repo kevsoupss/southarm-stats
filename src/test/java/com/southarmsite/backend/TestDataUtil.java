@@ -68,7 +68,7 @@ public final class TestDataUtil {
     }
 
 
-    public static Goal createTestGoalA(final Match match, final Player scorer, final Player assister) {
+    public static Goal createTestGoal(final Match match, final Player scorer, final Player assister) {
         return Goal.builder()
                 .match(match)
                 .scorer(scorer)
@@ -76,21 +76,6 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static Goal createTestGoalB(final Match match, final Player scorer, final Player assister) {
-        return Goal.builder()
-                .match(match)
-                .scorer(scorer)
-                .assister(assister)
-                .build();
-    }
-
-    public static Goal createTestGoalC(final Match match, final Player scorer, final Player assister) {
-        return Goal.builder()
-                .match(match)
-                .scorer(scorer)
-                .assister(null)
-                .build();
-    }
 
     public static PlayerMatchStat createTestPlayerMatchStatA(final Match match, final Player player) {
         return PlayerMatchStat.builder()

@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class Goal {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "goal_id_seq")
     private Integer goalId;
 
     @ManyToOne
