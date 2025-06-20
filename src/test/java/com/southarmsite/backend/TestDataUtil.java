@@ -53,7 +53,6 @@ public final class TestDataUtil {
 
     public static Match createTestMatchA() {
         return Match.builder()
-                .matchId(1)
                 .date(LocalDate.of(2025, 5, 20))
                 .location("Southarm")
                 .description("Jeff v Michael Special")
@@ -62,7 +61,6 @@ public final class TestDataUtil {
 
     public static Match createTestMatchB() {
         return Match.builder()
-                .matchId(2)
                 .date(LocalDate.of(2025, 5, 27))
                 .location("King George")
                 .description("Kevin v Ronald Bday Special")
@@ -72,7 +70,6 @@ public final class TestDataUtil {
 
     public static Goal createTestGoalA(final Match match, final Player scorer, final Player assister) {
         return Goal.builder()
-                .goalId(1)
                 .match(match)
                 .scorer(scorer)
                 .assister(assister)
@@ -81,7 +78,6 @@ public final class TestDataUtil {
 
     public static Goal createTestGoalB(final Match match, final Player scorer, final Player assister) {
         return Goal.builder()
-                .goalId(2)
                 .match(match)
                 .scorer(scorer)
                 .assister(assister)
@@ -90,7 +86,6 @@ public final class TestDataUtil {
 
     public static Goal createTestGoalC(final Match match, final Player scorer, final Player assister) {
         return Goal.builder()
-                .goalId(3)
                 .match(match)
                 .scorer(scorer)
                 .assister(null)
@@ -99,7 +94,6 @@ public final class TestDataUtil {
 
     public static PlayerMatchStat createTestPlayerMatchStatA(final Match match, final Player player) {
         return PlayerMatchStat.builder()
-                .id(1)
                 .match(match)
                 .player(player)
                 .goalsScored(2)
@@ -110,7 +104,6 @@ public final class TestDataUtil {
 
     public static PlayerMatchStat createTestPlayerMatchStatB(final Match match, final Player player) {
         return PlayerMatchStat.builder()
-                .id(2)
                 .match(match)
                 .player(player)
                 .goalsScored(3)
@@ -121,7 +114,6 @@ public final class TestDataUtil {
 
     public static PlayerMatchStat createTestPlayerMatchStatC(final Match match, final Player player) {
         return PlayerMatchStat.builder()
-                .id(3)
                 .match(match)
                 .player(player)
                 .goalsScored(2)

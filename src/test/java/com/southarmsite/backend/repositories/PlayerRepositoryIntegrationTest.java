@@ -1,6 +1,5 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.TestDataUtil;
 import com.southarmsite.backend.domain.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
