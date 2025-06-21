@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="playerMatchStat")
-public class PlayerMatchStat {
+public class PlayerMatchStatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class PlayerMatchStat {
 
     @ManyToOne
     @JoinColumn(name="player_id")
-    private Player player;
+    private PlayerEntity playerEntity;
 
     @ManyToOne
     @JoinColumn(name = "match_id")
-    private Match match;
+    private MatchEntity matchEntity;
 
     private int goalsScored;
     private int assists;

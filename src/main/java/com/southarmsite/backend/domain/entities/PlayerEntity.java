@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="player")
-public class Player {
+public class PlayerEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "player_id_seq")

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name="goal")
-public class Goal {
+public class GoalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "goal_id_seq")
@@ -20,14 +20,14 @@ public class Goal {
 
     @ManyToOne
     @JoinColumn(name = "match_id")
-    private Match match;
+    private MatchEntity matchEntity;
 
     @ManyToOne
     @JoinColumn(name = "scorer_id")
-    private Player scorer;
+    private PlayerEntity scorer;
 
     @ManyToOne
     @JoinColumn(name = "assister_id", nullable = true)
-    private Player assister;
+    private PlayerEntity assister;
 
 }

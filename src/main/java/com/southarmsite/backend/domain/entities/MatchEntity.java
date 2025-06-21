@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +11,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name="match")
-public class Match {
+public class MatchEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "match_id_seq")
