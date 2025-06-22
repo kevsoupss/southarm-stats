@@ -1,6 +1,6 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.domain.Match;
+import com.southarmsite.backend.domain.entities.MatchEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,59 +17,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class MatchRepositoryIntegrationTest {
+public class MatchEntityRepositoryIntegrationTest {
 
     private final MatchRepository underTest;
 
     @Autowired
-    public MatchRepositoryIntegrationTest(final MatchRepository underTest) {
+    public MatchEntityRepositoryIntegrationTest(final MatchRepository underTest) {
         this.underTest = underTest;
     }
 
     @Test
     public void testThatCreatesMatch() {
-        final Match match = createTestMatchA();
-        final Match savedMatch = underTest.save(match);
+        final MatchEntity matchEntity = createTestMatchA();
+        final MatchEntity savedMatchEntity = underTest.save(matchEntity);
 
-        assertThat(savedMatch).isEqualTo(match);
-        final Optional<Match> result = underTest.findById(match.getMatchId());
+        assertThat(savedMatchEntity).isEqualTo(matchEntity);
+        final Optional<MatchEntity> result = underTest.findById(matchEntity.getMatchId());
 
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(match);
+        assertThat(result.get()).isEqualTo(matchEntity);
     }
 
     @Test
     public void testThatCreateAndFindAllMatches() {
-        final Match matchA = underTest.save(createTestMatchA());
-        final Match matchB = underTest.save(createTestMatchB());
+        final MatchEntity matchEntityA = underTest.save(createTestMatchA());
+        final MatchEntity matchEntityB = underTest.save(createTestMatchB());
 
-        final List<Match> expected = List.of(matchA, matchB);
-        final List<Match> result = underTest.findAll();
+        final List<MatchEntity> expected = List.of(matchEntityA, matchEntityB);
+        final List<MatchEntity> result = underTest.findAll();
 
         assertThat(result).isEqualTo(expected);
     }
 
     @Test
     public void testThatCreateAndUpdatesMatch() {
-        final Match matchA = underTest.save(createTestMatchA());
+        final MatchEntity matchEntityA = underTest.save(createTestMatchA());
 
-        matchA.setDescription("UPDATED DESCRIPTION");
-        final Match updatedMatch = underTest.save(matchA);
+        matchEntityA.setDescription("UPDATED DESCRIPTION");
+        final MatchEntity updatedMatchEntity = underTest.save(matchEntityA);
 
-        final Optional<Match> result = underTest.findById(updatedMatch.getMatchId());
+        final Optional<MatchEntity> result = underTest.findById(updatedMatchEntity.getMatchId());
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(updatedMatch);
+        assertThat(result.get()).isEqualTo(updatedMatchEntity);
     }
 
     @Test
     public void testDeleteMatch() {
-        final Match matchA = underTest.save(createTestMatchA());
+        final MatchEntity matchEntityA = underTest.save(createTestMatchA());
 
-        final Optional<Match> saveResult = underTest.findById(matchA.getMatchId());
+        final Optional<MatchEntity> saveResult = underTest.findById(matchEntityA.getMatchId());
         assertThat(saveResult).isPresent();
 
-        underTest.delete(matchA);
-        final Optional<Match> result = underTest.findById(matchA.getMatchId());
+        underTest.delete(matchEntityA);
+        final Optional<MatchEntity> result = underTest.findById(matchEntityA.getMatchId());
         assertThat(result).isNotPresent();
 
     }

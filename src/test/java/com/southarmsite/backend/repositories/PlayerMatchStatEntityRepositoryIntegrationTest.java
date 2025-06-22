@@ -1,7 +1,7 @@
 package com.southarmsite.backend.repositories;
-import com.southarmsite.backend.domain.MatchEntity;
-import com.southarmsite.backend.domain.PlayerEntity;
-import com.southarmsite.backend.domain.PlayerMatchStatEntity;
+import com.southarmsite.backend.domain.entities.MatchEntity;
+import com.southarmsite.backend.domain.entities.PlayerEntity;
+import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class PlayerEntityMatchEntityStatRepositoryIntegrationTest {
+public class PlayerMatchStatEntityRepositoryIntegrationTest {
 
 
     private final PlayerMatchStatRepository underTest;
@@ -26,7 +26,7 @@ public class PlayerEntityMatchEntityStatRepositoryIntegrationTest {
     private final MatchRepository matchRepository;
 
     @Autowired
-    public PlayerEntityMatchEntityStatRepositoryIntegrationTest(PlayerMatchStatRepository underTest, PlayerRepository playerRepository, MatchRepository matchRepository){
+    public PlayerMatchStatEntityRepositoryIntegrationTest(PlayerMatchStatRepository underTest, PlayerRepository playerRepository, MatchRepository matchRepository){
         this.underTest = underTest;
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;

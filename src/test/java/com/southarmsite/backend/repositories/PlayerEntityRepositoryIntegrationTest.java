@@ -1,6 +1,6 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.domain.Player;
+import com.southarmsite.backend.domain.entities.PlayerEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,65 +16,65 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class PlayerRepositoryIntegrationTest {
+public class PlayerEntityRepositoryIntegrationTest {
 
     private final PlayerRepository underTest;
 
     @Autowired
-    public PlayerRepositoryIntegrationTest(final PlayerRepository underTest) {
+    public PlayerEntityRepositoryIntegrationTest(final PlayerRepository underTest) {
         this.underTest = underTest;
     }
 
     @Test
     public void testCreatePlayerWithId(){
-        final Player player = createTestPlayerA();
-        final Player savedPlayer = underTest.save(player);
+        final PlayerEntity playerEntity = createTestPlayerA();
+        final PlayerEntity savedPlayerEntity = underTest.save(playerEntity);
 
-        assertThat(player).isEqualTo(savedPlayer);
-        assertThat(savedPlayer.getPlayerId()).isNotNull();
-        assertThat(savedPlayer.getFirstName()).isEqualTo("Kevin");
+        assertThat(playerEntity).isEqualTo(savedPlayerEntity);
+        assertThat(savedPlayerEntity.getPlayerId()).isNotNull();
+        assertThat(savedPlayerEntity.getFirstName()).isEqualTo("Kevin");
     }
 
     @Test
     public void testCreateAndFindPlayerById() {
-        final Player player = createTestPlayerB();
-        final Player savedPlayer = underTest.save(player);
-        final Optional<Player> result = underTest.findById(savedPlayer.getPlayerId());
+        final PlayerEntity playerEntity = createTestPlayerB();
+        final PlayerEntity savedPlayerEntity = underTest.save(playerEntity);
+        final Optional<PlayerEntity> result = underTest.findById(savedPlayerEntity.getPlayerId());
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(savedPlayer);
+        assertThat(result.get()).isEqualTo(savedPlayerEntity);
     }
 
     @Test
     public void testCreateAndFindAllPlayers() {
-        final Player testPlayerA = underTest.save(createTestPlayerA());
-        final Player testPlayerB = underTest.save(createTestPlayerB());
-        final Player testPlayerC = underTest.save(createTestPlayerC());
+        final PlayerEntity testPlayerEntityA = underTest.save(createTestPlayerA());
+        final PlayerEntity testPlayerEntityB = underTest.save(createTestPlayerB());
+        final PlayerEntity testPlayerEntityC = underTest.save(createTestPlayerC());
 
-        final List<Player> expected = List.of(testPlayerA, testPlayerB, testPlayerC);
-        final List<Player> result = underTest.findAll();
+        final List<PlayerEntity> expected = List.of(testPlayerEntityA, testPlayerEntityB, testPlayerEntityC);
+        final List<PlayerEntity> result = underTest.findAll();
 
         assertThat(result).isEqualTo(expected);
     }
 
     @Test
     public void testCreateUpdatePlayer() {
-        final Player testPlayerA = underTest.save(createTestPlayerA());
-        testPlayerA.setFirstName("UPDATED");
-        underTest.save(testPlayerA);
-        final Optional<Player> result = underTest.findById(testPlayerA.getPlayerId());
+        final PlayerEntity testPlayerEntityA = underTest.save(createTestPlayerA());
+        testPlayerEntityA.setFirstName("UPDATED");
+        underTest.save(testPlayerEntityA);
+        final Optional<PlayerEntity> result = underTest.findById(testPlayerEntityA.getPlayerId());
         assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(testPlayerA);
+        assertThat(result.get()).isEqualTo(testPlayerEntityA);
 
     }
 
     @Test
     public void testCreateDeletePlayer() {
-        final Player testPlayerA = underTest.save(createTestPlayerA());
-        final Optional<Player> saveResult = underTest.findById(testPlayerA.getPlayerId());
+        final PlayerEntity testPlayerEntityA = underTest.save(createTestPlayerA());
+        final Optional<PlayerEntity> saveResult = underTest.findById(testPlayerEntityA.getPlayerId());
         assertThat(saveResult).isPresent();
 
-        underTest.delete(testPlayerA);
-        final Optional<Player> result = underTest.findById(testPlayerA.getPlayerId());
+        underTest.delete(testPlayerEntityA);
+        final Optional<PlayerEntity> result = underTest.findById(testPlayerEntityA.getPlayerId());
         assertThat(result).isNotPresent();
     }
 

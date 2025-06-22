@@ -1,4 +1,4 @@
-package com.southarmsite.backend.domain;
+package com.southarmsite.backend.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,4 +30,5 @@ public class PlayerMatchStatEntity {
     private int assists;
 
     private boolean captain;
+    private boolean win;
 }

@@ -1,4 +1,4 @@
-package com.southarmsite.backend.domain;
+package com.southarmsite.backend.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
