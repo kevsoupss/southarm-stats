@@ -1,4 +1,78 @@
 package com.southarmsite.backend.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.southarmsite.backend.domain.dto.MatchDto;
+import com.southarmsite.backend.domain.entities.MatchEntity;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDate;
+
+import static com.southarmsite.backend.TestDataUtil.*;
+
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@AutoConfigureMockMvc
 public class MatchControllerIntegrationTest {
+
+    private MockMvc mockMvc;
+
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public MatchControllerIntegrationTest(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    }
+
+    @Test
+    public void testThatCreateMatchSuccessfullyReturnsHttp201Created() throws Exception{
+        MatchDto testMatchDtoA = createTestMatchDtoA();
+        testMatchDtoA.setMatchId(null);
+        String matchJson = objectMapper.writeValueAsString(testMatchDtoA);
+        System.out.println(matchJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/matches")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(matchJson)
+
+        ).andExpect(
+                MockMvcResultMatchers.status().isCreated()
+        );
+    }
+
+    @Test
+    public void testThatCreateMatchSuccessfullyReturnsSavedMatch() throws Exception{
+        MatchDto testMatchDtoA = createTestMatchDtoA();
+        testMatchDtoA.setMatchId(null);
+        String matchJson = objectMapper.writeValueAsString(testMatchDtoA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/matches")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(matchJson)
+
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.matchId").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.date").value("2025-05-20")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.location").value("Southarm")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.description").value("Jeff v Michael Special")
+        );
+    }
 }

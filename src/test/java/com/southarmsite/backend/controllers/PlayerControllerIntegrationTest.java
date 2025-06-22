@@ -2,6 +2,7 @@ package com.southarmsite.backend.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +38,9 @@ public class PlayerControllerIntegrationTest {
 
     @Test
     public void testThatCreatePlayerSuccessfullyReturnsHttp201Created() throws Exception{
-        PlayerEntity testPlayerA = createTestPlayerA();
-        testPlayerA.setPlayerId(null);
-        String playerJson = objectMapper.writeValueAsString(testPlayerA);
+        PlayerDto testPlayerDtoA = createTestPlayerDtoA();
+        testPlayerDtoA.setPlayerId(null);
+        String playerJson = objectMapper.writeValueAsString(testPlayerDtoA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/players")
@@ -53,9 +54,9 @@ public class PlayerControllerIntegrationTest {
 
     @Test
     public void testThatCreatePlayerSuccessfullyReturnsSavedPlayer() throws Exception{
-        PlayerEntity testPlayerA = createTestPlayerA();
-        testPlayerA.setPlayerId(null);
-        String playerJson = objectMapper.writeValueAsString(testPlayerA);
+        PlayerDto testPlayerDtoA = createTestPlayerDtoA();
+        testPlayerDtoA.setPlayerId(null);
+        String playerJson = objectMapper.writeValueAsString(testPlayerDtoA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/players")
