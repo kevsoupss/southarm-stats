@@ -9,6 +9,10 @@ import com.southarmsite.backend.repositories.MatchRepository;
 import com.southarmsite.backend.services.MatchService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class MatchServiceImpl implements MatchService {
 
@@ -25,5 +29,11 @@ public class MatchServiceImpl implements MatchService {
         MatchEntity matchEntity = matchMapper.mapFrom(matchDto);
         MatchEntity savedMatchEntity = matchRepository.save(matchEntity);
         return matchMapper.mapTo(savedMatchEntity);
+    }
+
+    @Override
+    public List<MatchDto> findAll() {
+        List<MatchEntity> matchEntityList = StreamSupport.stream(matchRepository.findAll().spliterator(), false).collect(Collectors.toList());
+        return matchEntityList.stream().map(matchMapper::mapTo).collect(Collectors.toList());
     }
 }

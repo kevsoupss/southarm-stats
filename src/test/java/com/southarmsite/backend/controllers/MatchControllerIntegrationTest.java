@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.southarmsite.backend.domain.dto.MatchDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
+import com.southarmsite.backend.repositories.MatchRepository;
+import com.southarmsite.backend.services.MatchService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,13 +29,16 @@ import static com.southarmsite.backend.TestDataUtil.*;
 @AutoConfigureMockMvc
 public class MatchControllerIntegrationTest {
 
+
+    private MatchService matchService;
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
 
     @Autowired
-    public MatchControllerIntegrationTest(MockMvc mockMvc) {
+    public MatchControllerIntegrationTest(MockMvc mockMvc, MatchService matchService) {
         this.mockMvc = mockMvc;
+        this.matchService = matchService;
         this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -74,5 +79,37 @@ public class MatchControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.description").value("Jeff v Michael Special")
         );
+    }
+
+    @Test
+    public void testThatListsMatchesReturnsHttp200() throws Exception{
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/matches")
+                        .contentType(MediaType.APPLICATION_JSON)
+
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+
+    @Test
+    public void testThatListsMatchesReturnsList() throws Exception{
+        MatchDto testMatchDto = createTestMatchDtoA();
+        matchService.createMatch(testMatchDto);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/matches")
+                        .contentType(MediaType.APPLICATION_JSON)
+
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].matchId").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].date").value("2025-05-20")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].location").value("Southarm")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].description").value("Jeff v Michael Special")
+        );
+
     }
 }

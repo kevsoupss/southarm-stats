@@ -10,10 +10,9 @@ import com.southarmsite.backend.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class MatchController {
@@ -28,5 +27,11 @@ public class MatchController {
     @PostMapping(path="/matches")
     public ResponseEntity<MatchDto> createMatch(@RequestBody MatchDto matchDto){
         return new ResponseEntity<>(matchService.createMatch(matchDto), HttpStatus.CREATED);
+    }
+
+    @GetMapping(path="/matches")
+    public List<MatchDto> listMatches(){
+        List<MatchDto> matches = matchService.findAll();
+        return matches;
     }
 }

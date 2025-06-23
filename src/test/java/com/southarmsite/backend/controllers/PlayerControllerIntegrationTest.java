@@ -4,6 +4,7 @@ package com.southarmsite.backend.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
+import com.southarmsite.backend.services.PlayerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -25,13 +26,16 @@ import static com.southarmsite.backend.TestDataUtil.*;
 @AutoConfigureMockMvc
 public class PlayerControllerIntegrationTest {
 
+    private PlayerService playerService;
+
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
 
     @Autowired
-    public PlayerControllerIntegrationTest(MockMvc mockMvc) {
+    public PlayerControllerIntegrationTest(MockMvc mockMvc, PlayerService playerService) {
         this.mockMvc = mockMvc;
+        this.playerService = playerService;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -69,6 +73,33 @@ public class PlayerControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$.firstName").value("Kevin")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.lastName").value("Lei")
+        );
+    }
+
+    @Test
+    public void testThatListPlayersReturnsHttpStatus200() throws Exception{
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/players")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatListPlayersReturnsListOfPlayers() throws Exception{
+        PlayerDto testPlayerDtoA = createTestPlayerDtoA();
+        playerService.createPlayer(testPlayerDtoA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/players")
+                        .contentType(MediaType.APPLICATION_JSON)
+
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].playerId").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].firstName").value("Kevin")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].lastName").value("Lei")
         );
     }
 

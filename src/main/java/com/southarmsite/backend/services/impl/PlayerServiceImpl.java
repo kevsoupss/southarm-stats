@@ -7,6 +7,10 @@ import com.southarmsite.backend.repositories.PlayerRepository;
 import com.southarmsite.backend.services.PlayerService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class PlayerServiceImpl implements PlayerService {
 
@@ -23,5 +27,11 @@ public class PlayerServiceImpl implements PlayerService {
         PlayerEntity playerEntity = playerMapper.mapFrom(playerDto);
         PlayerEntity savedPlayerEntity = playerRepository.save(playerEntity);
         return playerMapper.mapTo(savedPlayerEntity);
+    }
+
+    @Override
+    public List<PlayerDto> findAll() {
+        List<PlayerEntity> playerEntityList = StreamSupport.stream(playerRepository.findAll().spliterator(), false).collect(Collectors.toList());
+        return playerEntityList.stream().map(playerMapper::mapTo).collect(Collectors.toList());
     }
 }
