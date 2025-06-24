@@ -1,6 +1,5 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.domain.entities.GoalEntity;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import org.junit.jupiter.api.Test;

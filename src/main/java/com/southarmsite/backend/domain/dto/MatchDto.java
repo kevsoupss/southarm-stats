@@ -20,5 +20,13 @@ public class MatchDto {
 
     private String description;
 
+    private String teamA;
+
+    private String teamB;
+
+    private Integer scoreA;
+
+    private Integer scoreB;
+
 
 }

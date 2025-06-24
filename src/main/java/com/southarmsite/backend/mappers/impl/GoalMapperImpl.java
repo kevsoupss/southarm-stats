@@ -1,7 +1,5 @@
 package com.southarmsite.backend.mappers.impl;
 
-import com.southarmsite.backend.domain.dto.GoalDto;
-import com.southarmsite.backend.domain.entities.GoalEntity;
 import com.southarmsite.backend.mappers.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

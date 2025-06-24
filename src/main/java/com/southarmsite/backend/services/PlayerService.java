@@ -9,4 +9,6 @@ public interface PlayerService {
     PlayerDto createPlayer(PlayerDto playerDto);
 
     List<PlayerDto> findAll();
+
+    List<PlayerDto> findAllByName(String name);
 }

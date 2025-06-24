@@ -34,4 +34,10 @@ public class PlayerServiceImpl implements PlayerService {
         List<PlayerEntity> playerEntityList = StreamSupport.stream(playerRepository.findAll().spliterator(), false).collect(Collectors.toList());
         return playerEntityList.stream().map(playerMapper::mapTo).collect(Collectors.toList());
     }
+
+    @Override
+    public List<PlayerDto> findAllByName(String name) {
+        List<PlayerEntity> playerEntityList = StreamSupport.stream(playerRepository.findAllByFirstNameContainingIgnoreCase(name).spliterator(), false).collect(Collectors.toList());
+        return playerEntityList.stream().map(playerMapper::mapTo).collect(Collectors.toList());
+    }
 }

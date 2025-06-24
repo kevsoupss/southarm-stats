@@ -3,7 +3,6 @@ package com.southarmsite.backend;
 
 import com.southarmsite.backend.domain.dto.MatchDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
-import com.southarmsite.backend.domain.entities.GoalEntity;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
@@ -66,6 +65,10 @@ public final class TestDataUtil {
                 .date(LocalDate.of(2025, 5, 20))
                 .location("Southarm")
                 .description("Jeff v Michael Special")
+                .teamA("Team Jeff")
+                .teamB("Team Michael")
+                .scoreA(2)
+                .scoreB(3)
                 .build();
     }
 
@@ -74,6 +77,10 @@ public final class TestDataUtil {
                 .date(LocalDate.of(2025, 5, 27))
                 .location("King George")
                 .description("Kevin v Ronald Bday Special")
+                .teamA("Team Kevin")
+                .teamB("Team Ronald")
+                .scoreA(2)
+                .scoreB(3)
                 .build();
     }
 
@@ -82,6 +89,10 @@ public final class TestDataUtil {
                 .date(LocalDate.of(2025, 5, 20))
                 .location("Southarm")
                 .description("Jeff v Michael Special")
+                .teamA("Team Jeff")
+                .teamB("Team Michael")
+                .scoreA(5)
+                .scoreB(3)
                 .build();
     }
 

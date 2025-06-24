@@ -7,10 +7,7 @@ import com.southarmsite.backend.mappers.Mapper;
 import com.southarmsite.backend.services.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,8 +27,13 @@ public class PlayerController {
     }
 
     @GetMapping(path="/players")
-    public List<PlayerDto> listPlayers() {
+    public ResponseEntity<List<PlayerDto>> listPlayers() {
         List<PlayerDto> players = playerService.findAll();
-        return players;
+        return ResponseEntity.ok(players);
+    }
+
+    @GetMapping("/players/by-name")
+    public ResponseEntity<List<PlayerDto>> getPlayersByName(@RequestParam String name) {
+        return ResponseEntity.ok(playerService.findAllByName(name));
     }
 }

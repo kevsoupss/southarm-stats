@@ -16,19 +16,27 @@ public class PlayerMatchStatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name="player_match_stat_id")
+    private Integer playerMatchStatId;
 
     @ManyToOne
-    @JoinColumn(name="player_id")
-    private PlayerEntity playerEntity;
+    @JoinColumn(name = "match_id", nullable = false)
+    private MatchEntity match;
 
     @ManyToOne
-    @JoinColumn(name = "match_id")
-    private MatchEntity matchEntity;
+    @JoinColumn(name = "player_id", nullable = false)
+    private PlayerEntity player;
 
-    private int goalsScored;
-    private int assists;
+    @ManyToOne
+    @JoinColumn(name = "team_id", nullable = false)
+    private TeamEntity team;
 
-    private boolean captain;
-    private boolean win;
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer goals = 0;
+
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer assists = 0;
+
+    @Column(nullable = false)
+    private Boolean won;
 }
