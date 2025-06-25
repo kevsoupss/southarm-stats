@@ -1,5 +1,6 @@
 package com.southarmsite.backend.domain.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class PlayerDto {
 
     private String lastName;
 
-    private String pictureUrl;
+    private String photoUrl;
 
     private String position;
 

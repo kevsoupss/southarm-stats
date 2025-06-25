@@ -58,7 +58,7 @@ public final class TestDataUtil {
                 .firstName("Kevin")
                 .lastName("Lei")
                 .position("Winger")
-                .pictureUrl("testUrl")
+                .photoUrl("testUrl")
                 .build();
     }
 

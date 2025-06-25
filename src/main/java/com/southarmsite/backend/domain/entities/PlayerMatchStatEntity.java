@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="playerMatchStat")
+@Table(name="player_match_stat")
 public class PlayerMatchStatEntity {
 
     @Id

@@ -103,6 +103,25 @@ public class PlayerControllerIntegrationTest {
         );
     }
 
+//    @Test
+//    public void testThatListPlayerMatchStatReturnsListOfPlayerStatDto() throws Exception{
+//        PlayerDto testPlayerDtoA = createTestPlayerDtoA();
+//        playerService.createPlayer(testPlayerDtoA);
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.get("/players")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//
+//        ).andExpect(
+//                MockMvcResultMatchers.jsonPath("$[0].playerId").isNumber()
+//        ).andExpect(
+//                MockMvcResultMatchers.jsonPath("$[0].firstName").value("Kevin")
+//        ).andExpect(
+//                MockMvcResultMatchers.jsonPath("$[0].lastName").value("Lei")
+//        );
+//    }
+
+
+
 
 
 

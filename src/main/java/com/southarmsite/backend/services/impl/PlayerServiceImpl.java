@@ -1,6 +1,7 @@
 package com.southarmsite.backend.services.impl;
 
 import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.PlayerStatsDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.mappers.Mapper;
 import com.southarmsite.backend.repositories.PlayerRepository;
@@ -35,4 +36,9 @@ public class PlayerServiceImpl implements PlayerService {
         return playerEntityList.stream().map(playerMapper::mapTo).collect(Collectors.toList());
     }
 
+    @Override
+    public List<PlayerStatsDto> findAllPlayerStats() {
+        List<PlayerStatsDto> playerStatsList = playerRepository.findAllPlayersWithStats();
+        return playerStatsList;
+    }
 }

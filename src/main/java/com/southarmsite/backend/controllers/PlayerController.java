@@ -2,6 +2,7 @@ package com.southarmsite.backend.controllers;
 
 
 import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.PlayerStatsDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.mappers.Mapper;
 import com.southarmsite.backend.services.PlayerService;
@@ -30,6 +31,12 @@ public class PlayerController {
     public ResponseEntity<List<PlayerDto>> listPlayers() {
         List<PlayerDto> players = playerService.findAll();
         return ResponseEntity.ok(players);
+    }
+
+    @GetMapping(path="/player-stats")
+    public ResponseEntity<List<PlayerStatsDto>> listPlayerStats() {
+        List<PlayerStatsDto> playerStats = playerService.findAllPlayerStats();
+        return ResponseEntity.ok(playerStats);
     }
 
 }
