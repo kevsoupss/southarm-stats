@@ -34,9 +34,4 @@ public class PlayerEntity {
     @Column(nullable=false, name="position")
     private String position;
 
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlayerMatchStatEntity> playerMatchStatEntityList = new ArrayList<>();
-
-
-
 }

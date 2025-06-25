@@ -21,19 +21,15 @@ public class PlayerController {
 
     }
 
-    @PostMapping(path="/players")
+    @PostMapping(path = "/players")
     public ResponseEntity<PlayerDto> createPlayer(@RequestBody PlayerDto playerDto) {
         return new ResponseEntity<>(playerService.createPlayer(playerDto), HttpStatus.CREATED);
     }
 
-    @GetMapping(path="/players")
+    @GetMapping(path = "/players")
     public ResponseEntity<List<PlayerDto>> listPlayers() {
         List<PlayerDto> players = playerService.findAll();
         return ResponseEntity.ok(players);
     }
 
-    @GetMapping("/players/by-name")
-    public ResponseEntity<List<PlayerDto>> getPlayersByName(@RequestParam String name) {
-        return ResponseEntity.ok(playerService.findAllByName(name));
-    }
 }

@@ -1,12 +1,10 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.domain.entities.PlayerEntity;
+import com.southarmsite.backend.domain.entities.TeamEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface PlayerRepository extends JpaRepository<PlayerEntity, Integer> {
+public interface TeamRepository extends JpaRepository<TeamEntity, Integer> {
 
 }

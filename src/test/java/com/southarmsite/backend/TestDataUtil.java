@@ -6,8 +6,10 @@ import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
+import com.southarmsite.backend.domain.entities.TeamEntity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public final class TestDataUtil {
     private TestDataUtil() {
@@ -19,7 +21,7 @@ public final class TestDataUtil {
                 .firstName("Kevin")
                 .lastName("Lei")
                 .position("Winger")
-                .pictureUrl("testUrl")
+                .photoUrl("testUrl")
                 .build();
     }
 
@@ -28,7 +30,7 @@ public final class TestDataUtil {
                 .firstName("Ronald")
                 .lastName("Lam")
                 .position("Winger")
-                .pictureUrl("testUrl2")
+                .photoUrl("testUrl2")
                 .build();
     }
 
@@ -37,7 +39,7 @@ public final class TestDataUtil {
                 .firstName("Rickey")
                 .lastName("Lam")
                 .position("Striker")
-                .pictureUrl("testUrl3")
+                .photoUrl("testUrl3")
                 .build();
     }
 
@@ -47,7 +49,7 @@ public final class TestDataUtil {
                 .firstName("Michael")
                 .lastName("Jeff")
                 .position("Center Midfield")
-                .pictureUrl("testUrl4")
+                .photoUrl("testUrl4")
                 .build();
     }
 
@@ -60,25 +62,23 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static MatchEntity createTestMatchA() {
+    public static MatchEntity createTestMatchA(TeamEntity teamA, TeamEntity teamB) {
         return MatchEntity.builder()
                 .date(LocalDate.of(2025, 5, 20))
                 .location("Southarm")
-                .description("Jeff v Michael Special")
-                .teamA("Team Jeff")
-                .teamB("Team Michael")
+                .teamA(teamA)
+                .teamB(teamB)
                 .scoreA(2)
                 .scoreB(3)
                 .build();
     }
 
-    public static MatchEntity createTestMatchB() {
+    public static MatchEntity createTestMatchB(TeamEntity teamA, TeamEntity teamB) {
         return MatchEntity.builder()
                 .date(LocalDate.of(2025, 5, 27))
                 .location("King George")
-                .description("Kevin v Ronald Bday Special")
-                .teamA("Team Kevin")
-                .teamB("Team Ronald")
+                .teamA(teamA)
+                .teamB(teamB)
                 .scoreA(2)
                 .scoreB(3)
                 .build();
@@ -97,45 +97,50 @@ public final class TestDataUtil {
     }
 
 
-    public static GoalEntity createTestGoal(final MatchEntity matchEntity, final PlayerEntity scorer, final PlayerEntity assister) {
-        return GoalEntity.builder()
-                .matchEntity(matchEntity)
-                .scorer(scorer)
-                .assister(assister)
+    public static TeamEntity createTestTeamA(PlayerEntity captain) {
+        return TeamEntity.builder()
+                .name("Team Kevin")
+                .captain(captain)
+                .build();
+    }
+    public static TeamEntity createTestTeamB(PlayerEntity captain) {
+        return TeamEntity.builder()
+                .name("Team Ronald")
+                .captain(captain)
                 .build();
     }
 
 
-    public static PlayerMatchStatEntity createTestPlayerMatchStatA(final MatchEntity matchEntity, final PlayerEntity playerEntity) {
+    public static PlayerMatchStatEntity createTestPlayerMatchStatA(final MatchEntity matchEntity, final PlayerEntity playerEntity, final TeamEntity teamEntity) {
         return PlayerMatchStatEntity.builder()
-                .matchEntity(matchEntity)
-                .playerEntity(playerEntity)
-                .goalsScored(2)
+                .player(playerEntity)
+                .match(matchEntity)
+                .team(teamEntity)
+                .goals(1)
                 .assists(1)
-                .captain(false)
-                .win(false)
+                .won(false)
                 .build();
     }
 
-    public static PlayerMatchStatEntity createTestPlayerMatchStatB(final MatchEntity matchEntity, final PlayerEntity playerEntity) {
+    public static PlayerMatchStatEntity createTestPlayerMatchStatB(final MatchEntity matchEntity, final PlayerEntity playerEntity, final TeamEntity teamEntity) {
         return PlayerMatchStatEntity.builder()
-                .matchEntity(matchEntity)
-                .playerEntity(playerEntity)
-                .goalsScored(3)
-                .assists(3)
-                .captain(true)
-                .win(true)
+                .player(playerEntity)
+                .match(matchEntity)
+                .team(teamEntity)
+                .goals(3)
+                .assists(2)
+                .won(false)
                 .build();
     }
 
-    public static PlayerMatchStatEntity createTestPlayerMatchStatC(final MatchEntity matchEntity, final PlayerEntity playerEntity) {
+    public static PlayerMatchStatEntity createTestPlayerMatchStatC(final MatchEntity matchEntity, final PlayerEntity playerEntity, final TeamEntity teamEntity) {
         return PlayerMatchStatEntity.builder()
-                .matchEntity(matchEntity)
-                .playerEntity(playerEntity)
-                .goalsScored(2)
-                .assists(1)
-                .captain(true)
-                .win(true)
+                .player(playerEntity)
+                .match(matchEntity)
+                .team(teamEntity)
+                .goals(3)
+                .assists(5)
+                .won(true)
                 .build();
     }
 

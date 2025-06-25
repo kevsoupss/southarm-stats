@@ -41,7 +41,4 @@ public class MatchEntity {
     @Column(nullable = false)
     private String location;
 
-    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlayerMatchStatEntity> playerMatchStatEntityLists = new ArrayList<>();
-
 }

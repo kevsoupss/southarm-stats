@@ -2,6 +2,7 @@ package com.southarmsite.backend.repositories;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
+import com.southarmsite.backend.domain.entities.TeamEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +25,27 @@ public class PlayerMatchStatEntityRepositoryIntegrationTest {
     private final PlayerMatchStatRepository underTest;
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
+    private final TeamRepository teamRepository;
 
     @Autowired
-    public PlayerMatchStatEntityRepositoryIntegrationTest(PlayerMatchStatRepository underTest, PlayerRepository playerRepository, MatchRepository matchRepository){
+    public PlayerMatchStatEntityRepositoryIntegrationTest(PlayerMatchStatRepository underTest, PlayerRepository playerRepository, MatchRepository matchRepository, TeamRepository teamRepository){
         this.underTest = underTest;
         this.playerRepository = playerRepository;
         this.matchRepository = matchRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Test
     public void testThatCreatePlayerMatchStat() {
-        final MatchEntity matchEntity = matchRepository.save(createTestMatchA());
-        final PlayerEntity playerEntity = playerRepository.save(createTestPlayerA());
-        final PlayerMatchStatEntity playerMatchStatEntity = createTestPlayerMatchStatA(matchEntity, playerEntity);
+        final PlayerEntity playerA = playerRepository.save(createTestPlayerA());
+        final PlayerEntity playerB = playerRepository.save(createTestPlayerB());
+        final TeamEntity teamA = teamRepository.save(createTestTeamA(playerA));
+        final TeamEntity teamB = teamRepository.save(createTestTeamB(playerB));
+
+
+        final MatchEntity matchEntity = matchRepository.save(createTestMatchA(teamA, teamB));
+
+        final PlayerMatchStatEntity playerMatchStatEntity = createTestPlayerMatchStatA(matchEntity, playerA, teamA);
         final PlayerMatchStatEntity result = underTest.save(playerMatchStatEntity);
 
         assertThat(result).isEqualTo(playerMatchStatEntity);
@@ -45,37 +54,41 @@ public class PlayerMatchStatEntityRepositoryIntegrationTest {
 
     @Test
     public void testThatFindAllPlayerMatchStat() {
-        final MatchEntity matchEntityA = matchRepository.save(createTestMatchA());
-        final MatchEntity matchEntityB = matchRepository.save(createTestMatchB());
-        final PlayerEntity playerEntityA = playerRepository.save(createTestPlayerA());
-        final PlayerEntity playerEntityB = playerRepository.save(createTestPlayerB());
-        final PlayerMatchStatEntity playerMatchStatEntityA = underTest.save(createTestPlayerMatchStatA(matchEntityA, playerEntityA));
-        final PlayerMatchStatEntity playerMatchStatEntityB = underTest.save(createTestPlayerMatchStatB(matchEntityA, playerEntityB));
-        final PlayerMatchStatEntity playerMatchStatEntityC = underTest.save(createTestPlayerMatchStatC(matchEntityB, playerEntityA));
-        final PlayerMatchStatEntity playerMatchStatEntityD = underTest.save(createTestPlayerMatchStatA(matchEntityB, playerEntityB));
+        final PlayerEntity playerA = playerRepository.save(createTestPlayerA());
+        final PlayerEntity playerB = playerRepository.save(createTestPlayerB());
+        final TeamEntity teamA = teamRepository.save(createTestTeamA(playerA));
+        final TeamEntity teamB = teamRepository.save(createTestTeamB(playerB));
 
-        List<PlayerMatchStatEntity> expected = List.of(playerMatchStatEntityA, playerMatchStatEntityB, playerMatchStatEntityC, playerMatchStatEntityD);
 
-        List<PlayerMatchStatEntity> result = underTest.findAll();
+        final MatchEntity matchEntity = matchRepository.save(createTestMatchA(teamA, teamB));
+
+        final PlayerMatchStatEntity playerMatchStatEntityA = underTest.save(createTestPlayerMatchStatA(matchEntity, playerA, teamA));
+        final PlayerMatchStatEntity playerMatchStatEntityB = underTest.save(createTestPlayerMatchStatB(matchEntity, playerA, teamA));
+
+        final List<PlayerMatchStatEntity> expected = List.of(playerMatchStatEntityA, playerMatchStatEntityB);
+        final List<PlayerMatchStatEntity> result = underTest.findAll();
+
         assertThat(result).isEqualTo(expected);
+
     }
 
     @Test
     public void testThatUpdatesPlayerMatchStat() {
-        final MatchEntity matchEntityA = matchRepository.save(createTestMatchA());
-        final PlayerEntity playerEntityA = playerRepository.save(createTestPlayerA());
-        final PlayerMatchStatEntity playerMatchStatEntityA = underTest.save(createTestPlayerMatchStatA(matchEntityA, playerEntityA));
-        Optional<PlayerMatchStatEntity> result = underTest.findById(playerMatchStatEntityA.getId());
+        final PlayerEntity playerA = playerRepository.save(createTestPlayerA());
+        final PlayerEntity playerB = playerRepository.save(createTestPlayerB());
+        final TeamEntity teamA = teamRepository.save(createTestTeamA(playerA));
+        final TeamEntity teamB = teamRepository.save(createTestTeamB(playerB));
 
+
+        final MatchEntity matchEntity = matchRepository.save(createTestMatchA(teamA, teamB));
+        final PlayerMatchStatEntity playerMatchStatEntity = createTestPlayerMatchStatA(matchEntity, playerA, teamA);
+        final PlayerMatchStatEntity savedPlayerMatchStatEntity = underTest.save(playerMatchStatEntity);
+
+        savedPlayerMatchStatEntity.setGoals(5);
+        underTest.save(savedPlayerMatchStatEntity);
+        final Optional<PlayerMatchStatEntity> result = underTest.findById(savedPlayerMatchStatEntity.getPlayerMatchStatId());
         assertThat(result).isPresent();
-        assertThat(result.get().getGoalsScored()).isEqualTo(2);
-
-        playerMatchStatEntityA.setGoalsScored(5);
-        underTest.save(playerMatchStatEntityA);
-
-        Optional<PlayerMatchStatEntity> updatedResult = underTest.findById(playerMatchStatEntityA.getId());
-        assertThat(updatedResult).isPresent();
-        assertThat(updatedResult.get().getGoalsScored()).isEqualTo(5);
+        assertThat(result.get()).isEqualTo(savedPlayerMatchStatEntity);
 
     }
 
