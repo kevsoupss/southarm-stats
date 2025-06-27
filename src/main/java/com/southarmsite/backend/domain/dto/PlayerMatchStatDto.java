@@ -1,0 +1,31 @@
+package com.southarmsite.backend.domain.dto;
+
+import com.southarmsite.backend.domain.entities.MatchEntity;
+import com.southarmsite.backend.domain.entities.PlayerEntity;
+import com.southarmsite.backend.domain.entities.TeamEntity;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class PlayerMatchStatDto {
+
+    private Integer playerMatchStatId;
+
+    private MatchDto match;
+
+    private PlayerDto player;
+
+    private TeamDto team;
+
+    private Integer goals;
+
+    private Integer assists;
+
+    private Boolean won;
+}

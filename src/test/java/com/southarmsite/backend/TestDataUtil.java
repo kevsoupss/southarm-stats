@@ -1,10 +1,7 @@
 package com.southarmsite.backend;
 
 
-import com.southarmsite.backend.domain.dto.MatchDto;
-import com.southarmsite.backend.domain.dto.PlayerDto;
-import com.southarmsite.backend.domain.dto.PlayerSummaryDto;
-import com.southarmsite.backend.domain.dto.TeamDto;
+import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
@@ -172,6 +169,28 @@ public final class TestDataUtil {
                 .team(teamEntity)
                 .goals(3)
                 .assists(5)
+                .won(true)
+                .build();
+    }
+
+    public static PlayerMatchStatDto createTestPlayerMatchStatDtoA(final MatchDto matchDto, final PlayerDto playerDto, final TeamDto teamDto) {
+        return PlayerMatchStatDto.builder()
+                .player(playerDto)
+                .match(matchDto)
+                .team(teamDto)
+                .goals(1)
+                .assists(1)
+                .won(false)
+                .build();
+    }
+
+    public static PlayerMatchStatDto createTestPlayerMatchStatDtoB(final MatchDto matchDto, final PlayerDto playerDto, final TeamDto teamDto) {
+        return PlayerMatchStatDto.builder()
+                .player(playerDto)
+                .match(matchDto)
+                .team(teamDto)
+                .goals(2)
+                .assists(1)
                 .won(true)
                 .build();
     }
