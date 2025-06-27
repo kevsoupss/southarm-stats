@@ -3,9 +3,13 @@ package com.southarmsite.backend.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.southarmsite.backend.domain.dto.MatchDto;
+import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.TeamDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.repositories.MatchRepository;
 import com.southarmsite.backend.services.MatchService;
+import com.southarmsite.backend.services.PlayerService;
+import com.southarmsite.backend.services.TeamService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -31,20 +35,29 @@ public class MatchControllerIntegrationTest {
 
 
     private MatchService matchService;
+    private TeamService teamService;
+    private PlayerService playerService;
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
 
     @Autowired
-    public MatchControllerIntegrationTest(MockMvc mockMvc, MatchService matchService) {
+    public MatchControllerIntegrationTest(MockMvc mockMvc, MatchService matchService, TeamService teamService, PlayerService playerService) {
         this.mockMvc = mockMvc;
         this.matchService = matchService;
+        this.teamService = teamService;
+        this.playerService = playerService;
         this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @Test
     public void testThatCreateMatchSuccessfullyReturnsHttp201Created() throws Exception{
-        MatchDto testMatchDtoA = createTestMatchDtoA();
+        PlayerDto testPlayerDtoA = playerService.createPlayer(createTestPlayerDtoA());
+        TeamDto testTeamDtoA = teamService.createTeam(createTestTeamDtoA(testPlayerDtoA));
+        PlayerDto testPlayerDtoB = playerService.createPlayer(createTestPlayerDtoB());
+        TeamDto testTeamDtoB = teamService.createTeam(createTestTeamDtoB(testPlayerDtoB));
+
+        MatchDto testMatchDtoA = createTestMatchDtoA(testTeamDtoA,testTeamDtoB);
         testMatchDtoA.setMatchId(null);
         String matchJson = objectMapper.writeValueAsString(testMatchDtoA);
         System.out.println(matchJson);
@@ -61,10 +74,15 @@ public class MatchControllerIntegrationTest {
 
     @Test
     public void testThatCreateMatchSuccessfullyReturnsSavedMatch() throws Exception{
-        MatchDto testMatchDtoA = createTestMatchDtoA();
+        PlayerDto testPlayerDtoA = playerService.createPlayer(createTestPlayerDtoA());
+        TeamDto testTeamDtoA = teamService.createTeam(createTestTeamDtoA(testPlayerDtoA));
+        PlayerDto testPlayerDtoB = playerService.createPlayer(createTestPlayerDtoB());
+        TeamDto testTeamDtoB = teamService.createTeam(createTestTeamDtoB(testPlayerDtoB));
+
+        MatchDto testMatchDtoA = createTestMatchDtoA(testTeamDtoA,testTeamDtoB);
         testMatchDtoA.setMatchId(null);
         String matchJson = objectMapper.writeValueAsString(testMatchDtoA);
-
+        System.out.println(matchJson);
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/matches")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +95,9 @@ public class MatchControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.location").value("Southarm")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.description").value("Jeff v Michael Special")
+                MockMvcResultMatchers.jsonPath("$.scoreA").value(5)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.scoreB").value(3)
         );
     }
 
@@ -95,8 +115,15 @@ public class MatchControllerIntegrationTest {
 
     @Test
     public void testThatListsMatchesReturnsList() throws Exception{
-        MatchDto testMatchDto = createTestMatchDtoA();
-        matchService.createMatch(testMatchDto);
+        PlayerDto testPlayerDtoA = playerService.createPlayer(createTestPlayerDtoA());
+        TeamDto testTeamDtoA = teamService.createTeam(createTestTeamDtoA(testPlayerDtoA));
+        PlayerDto testPlayerDtoB = playerService.createPlayer(createTestPlayerDtoB());
+        TeamDto testTeamDtoB = teamService.createTeam(createTestTeamDtoB(testPlayerDtoB));
+
+        MatchDto testMatchDtoA = createTestMatchDtoA(testTeamDtoA,testTeamDtoB);
+        testMatchDtoA.setMatchId(null);
+
+        matchService.createMatch(testMatchDtoA);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/matches")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +135,9 @@ public class MatchControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].location").value("Southarm")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].description").value("Jeff v Michael Special")
+                MockMvcResultMatchers.jsonPath("$[0].scoreA").value(5)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].scoreB").value(3)
         );
 
     }

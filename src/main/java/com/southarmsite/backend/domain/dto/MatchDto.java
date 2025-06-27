@@ -18,11 +18,9 @@ public class MatchDto {
 
     private String location;
 
-    private String description;
+    private TeamDto teamA;
 
-    private String teamA;
-
-    private String teamB;
+    private TeamDto teamB;
 
     private Integer scoreA;
 

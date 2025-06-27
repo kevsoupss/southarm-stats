@@ -3,6 +3,8 @@ package com.southarmsite.backend;
 
 import com.southarmsite.backend.domain.dto.MatchDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.PlayerSummaryDto;
+import com.southarmsite.backend.domain.dto.TeamDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
@@ -62,6 +64,15 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static PlayerDto createTestPlayerDtoB() {
+        return PlayerDto.builder()
+                .firstName("Ronald")
+                .lastName("Lam")
+                .position("Winger")
+                .photoUrl("testUrl")
+                .build();
+    }
+
     public static MatchEntity createTestMatchA(TeamEntity teamA, TeamEntity teamB) {
         return MatchEntity.builder()
                 .date(LocalDate.of(2025, 5, 20))
@@ -84,13 +95,12 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static MatchDto createTestMatchDtoA() {
+    public static MatchDto createTestMatchDtoA(TeamDto teamA, TeamDto teamB) {
         return MatchDto.builder()
                 .date(LocalDate.of(2025, 5, 20))
                 .location("Southarm")
-                .description("Jeff v Michael Special")
-                .teamA("Team Jeff")
-                .teamB("Team Michael")
+                .teamA(teamA)
+                .teamB(teamB)
                 .scoreA(5)
                 .scoreB(3)
                 .build();
@@ -107,6 +117,28 @@ public final class TestDataUtil {
         return TeamEntity.builder()
                 .name("Team Ronald")
                 .captain(captain)
+                .build();
+    }
+
+    public static TeamDto createTestTeamDtoA(PlayerDto captain) {
+        return TeamDto.builder()
+                .name("Team Kevin")
+                .captain(captain)
+                .build();
+    }
+
+    public static TeamDto createTestTeamDtoB(PlayerDto captain) {
+        return TeamDto.builder()
+                .name("Team Ronald")
+                .captain(captain)
+                .build();
+    }
+
+    public static PlayerSummaryDto createTestPlayerSummaryDtoA() {
+        return PlayerSummaryDto.builder()
+                .firstName("Joe")
+                .lastName("Jeff")
+                .playerId(1)
                 .build();
     }
 
