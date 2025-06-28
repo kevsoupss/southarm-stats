@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.southarmsite.backend.domain.dto.MatchDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 import com.southarmsite.backend.domain.dto.TeamDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.repositories.MatchRepository;
 import com.southarmsite.backend.services.MatchService;
+import com.southarmsite.backend.services.PlayerMatchStatService;
 import com.southarmsite.backend.services.PlayerService;
 import com.southarmsite.backend.services.TeamService;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDate;
@@ -37,16 +40,22 @@ public class MatchControllerIntegrationTest {
     private MatchService matchService;
     private TeamService teamService;
     private PlayerService playerService;
+    private PlayerMatchStatService statService;
+    private ObjectMapper objectMapper;
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
-
     @Autowired
-    public MatchControllerIntegrationTest(MockMvc mockMvc, MatchService matchService, TeamService teamService, PlayerService playerService) {
+    public MatchControllerIntegrationTest(
+            MockMvc mockMvc,
+            MatchService matchService,
+            TeamService teamService,
+            PlayerService playerService,
+            PlayerMatchStatService statService) {
         this.mockMvc = mockMvc;
         this.matchService = matchService;
         this.teamService = teamService;
         this.playerService = playerService;
+        this.statService = statService;
         this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -140,6 +149,36 @@ public class MatchControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$[0].scoreB").value(3)
         );
 
+    }
+
+    @Test
+    public void testThatGetRecentMatchResultsReturns200() throws Exception {
+        PlayerDto playerA = playerService.createPlayer(createTestPlayerDtoA());
+        TeamDto teamA = teamService.createTeam(createTestTeamDtoA(playerA));
+
+        PlayerDto playerB = playerService.createPlayer(createTestPlayerDtoB());
+        TeamDto teamB = teamService.createTeam(createTestTeamDtoB(playerB));
+
+        MatchDto match = matchService.createMatch(createTestMatchDtoA(teamA, teamB));
+
+        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA( match.getMatchId(),playerA, teamA.getTeamId());
+        statService.createPlayerMatchStat(statA);
+
+        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(match.getMatchId(),playerB, teamB.getTeamId());
+        statService.createPlayerMatchStat(statB);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/matches/recent")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].teamA").value(teamA.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].scoreA").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].playerStats[0].player.firstName").value("Kevin")
+        ).andDo(MockMvcResultHandlers.print()) ;
     }
 
 

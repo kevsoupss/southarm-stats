@@ -1,6 +1,7 @@
 package com.southarmsite.backend.controllers;
 
 import com.southarmsite.backend.domain.dto.MatchDto;
+import com.southarmsite.backend.domain.dto.MatchResultsDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
@@ -33,5 +34,11 @@ public class MatchController {
     public List<MatchDto> listMatches(){
         List<MatchDto> matches = matchService.findAll();
         return matches;
+    }
+
+    @GetMapping(path="/matches/recent")
+    public List<MatchResultsDto> recentMatches() {
+        List<MatchResultsDto> recentMatches = matchService.getRecentMatches();
+        return recentMatches;
     }
 }

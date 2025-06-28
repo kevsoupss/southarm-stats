@@ -17,15 +17,19 @@ public class PlayerMatchStatDto {
 
     private Integer playerMatchStatId;
 
-    private MatchDto match;
-
     private PlayerDto player;
-
-    private TeamDto team;
 
     private Integer goals;
 
     private Integer assists;
 
     private Boolean won;
+
+    private Integer matchId;
+
+    private Integer teamId;
+
+    private Boolean potm;
+
+    private Boolean dotm;
 }

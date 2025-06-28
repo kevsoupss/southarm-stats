@@ -39,4 +39,12 @@ public class PlayerMatchStatEntity {
 
     @Column(nullable = false)
     private Boolean won;
+
+    @Column(nullable = false)
+    private Boolean potm = false;
+
+    @Column(nullable = false)
+    private Boolean dotm = false;
+
+
 }

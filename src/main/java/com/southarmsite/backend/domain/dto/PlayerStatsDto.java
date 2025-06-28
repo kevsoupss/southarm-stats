@@ -21,5 +21,7 @@ public class PlayerStatsDto {
         private Long goals;
         private Long assists;
         private Long matches;
+        private Long potm;
+        private Long dotm;
 
 }

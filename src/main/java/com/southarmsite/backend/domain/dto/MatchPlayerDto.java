@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PlayerSummaryDto {
+public class MatchPlayerDto {
     private Integer playerId;
     private String firstName;
     private String lastName;

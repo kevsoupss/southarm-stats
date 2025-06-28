@@ -2,9 +2,15 @@ package com.southarmsite.backend.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.southarmsite.backend.domain.dto.MatchDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
+import com.southarmsite.backend.domain.dto.TeamDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
+import com.southarmsite.backend.services.MatchService;
+import com.southarmsite.backend.services.PlayerMatchStatService;
 import com.southarmsite.backend.services.PlayerService;
+import com.southarmsite.backend.services.TeamService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.southarmsite.backend.TestDataUtil.*;
@@ -31,12 +38,23 @@ public class PlayerControllerIntegrationTest {
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
+    private TeamService teamService;
+    private MatchService matchService;
+    private PlayerMatchStatService statService;
 
     @Autowired
-    public PlayerControllerIntegrationTest(MockMvc mockMvc, PlayerService playerService) {
+    public PlayerControllerIntegrationTest(
+            MockMvc mockMvc,
+            PlayerService playerService,
+            MatchService matchService,
+            TeamService teamService,
+            PlayerMatchStatService statService) {
         this.mockMvc = mockMvc;
         this.playerService = playerService;
         this.objectMapper = new ObjectMapper();
+        this.matchService = matchService;
+        this.teamService = teamService;
+        this.statService = statService;
     }
 
 
@@ -103,22 +121,39 @@ public class PlayerControllerIntegrationTest {
         );
     }
 
-//    @Test
-//    public void testThatListPlayerMatchStatReturnsListOfPlayerStatDto() throws Exception{
-//        PlayerDto testPlayerDtoA = createTestPlayerDtoA();
-//        playerService.createPlayer(testPlayerDtoA);
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/players")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//
-//        ).andExpect(
-//                MockMvcResultMatchers.jsonPath("$[0].playerId").isNumber()
-//        ).andExpect(
-//                MockMvcResultMatchers.jsonPath("$[0].firstName").value("Kevin")
-//        ).andExpect(
-//                MockMvcResultMatchers.jsonPath("$[0].lastName").value("Lei")
-//        );
-//    }
+    @Test
+    public void testThatListPlayerMatchStatReturnsListOfPlayerStatDto() throws Exception{
+        PlayerDto playerA = playerService.createPlayer(createTestPlayerDtoA());
+        TeamDto teamA = teamService.createTeam(createTestTeamDtoA(playerA));
+
+        PlayerDto playerB = playerService.createPlayer(createTestPlayerDtoB());
+        TeamDto teamB = teamService.createTeam(createTestTeamDtoB(playerB));
+
+        MatchDto matchA = matchService.createMatch(createTestMatchDtoA(teamA, teamB));
+        MatchDto matchB = matchService.createMatch(createTestMatchDtoB(teamA, teamB));
+
+        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA( matchA.getMatchId(),playerA, teamA.getTeamId());
+        statService.createPlayerMatchStat(statA);
+
+        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(matchA.getMatchId(),playerB, teamB.getTeamId());
+        statService.createPlayerMatchStat(statB);
+
+        PlayerMatchStatDto statC = createTestPlayerMatchStatDtoA( matchB.getMatchId(),playerA, teamA.getTeamId());
+        statService.createPlayerMatchStat(statA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-stats")
+                        .contentType(MediaType.APPLICATION_JSON)
+
+        ).andDo(MockMvcResultHandlers.print()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].playerId").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].firstName").value("Kevin")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].lastName").value("Lei")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].potm").value(2));
+    }
 
 
 

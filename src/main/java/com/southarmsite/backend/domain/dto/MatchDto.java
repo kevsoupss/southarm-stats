@@ -26,5 +26,6 @@ public class MatchDto {
 
     private Integer scoreB;
 
+    private String title;
 
 }

@@ -73,9 +73,8 @@ public class PlayerMatchStatControllerIntegrationTest {
 
     @Test
     public void testThatCreatePlayerMatchStatReturns201() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA, testPlayerDtoA, testTeamDtoA);
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
         statDto.setPlayerMatchStatId(null);
-
         String json = objectMapper.writeValueAsString(statDto);
 
         mockMvc.perform(
@@ -89,9 +88,8 @@ public class PlayerMatchStatControllerIntegrationTest {
 
     @Test
     public void testThatCreatePlayerMatchStatReturnsSavedStat() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA, testPlayerDtoA, testTeamDtoA);
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
         statDto.setPlayerMatchStatId(null);
-
         String json = objectMapper.writeValueAsString(statDto);
 
         mockMvc.perform(
@@ -99,7 +97,7 @@ public class PlayerMatchStatControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.playerMatchStatId").isNumber()
+                MockMvcResultMatchers.jsonPath("$.matchId").isNumber()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.goals").value(1)
         ).andExpect(
@@ -119,14 +117,15 @@ public class PlayerMatchStatControllerIntegrationTest {
 
     @Test
     public void testThatListPlayerMatchStatsReturnsList() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA, testPlayerDtoA, testTeamDtoA);
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
+        statDto.setPlayerMatchStatId(null);
         playerMatchStatService.createPlayerMatchStat(statDto);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/player-match-stats")
                         .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].playerMatchStatId").isNumber()
+                MockMvcResultMatchers.jsonPath("$[0].matchId").isNumber()
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].goals").value(statDto.getGoals())
         ).andExpect(

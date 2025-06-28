@@ -1,10 +1,15 @@
 package com.southarmsite.backend.services.impl;
 
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
+import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
+import com.southarmsite.backend.domain.entities.TeamEntity;
 import com.southarmsite.backend.mappers.Mapper;
+import com.southarmsite.backend.repositories.MatchRepository;
 import com.southarmsite.backend.repositories.PlayerMatchStatRepository;
+import com.southarmsite.backend.repositories.TeamRepository;
 import com.southarmsite.backend.services.PlayerMatchStatService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,19 +20,37 @@ import java.util.stream.StreamSupport;
 public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
 
     private PlayerMatchStatRepository playerMatchStatRepository;
+    private MatchRepository matchRepository;
+    private TeamRepository teamRepository;
     private Mapper<PlayerMatchStatEntity, PlayerMatchStatDto> playerMatchStatMapper;
 
     public PlayerMatchStatServiceImpl(
             PlayerMatchStatRepository playerMatchStatRepository,
+            MatchRepository matchRepository,
+            TeamRepository teamRepository,
             Mapper<PlayerMatchStatEntity, PlayerMatchStatDto> playerMatchStatMapper
     ) {
         this.playerMatchStatRepository = playerMatchStatRepository;
+        this.matchRepository = matchRepository;
+        this.teamRepository = teamRepository;
         this.playerMatchStatMapper = playerMatchStatMapper;
+
     }
 
     @Override
     public PlayerMatchStatDto createPlayerMatchStat(PlayerMatchStatDto dto) {
         PlayerMatchStatEntity entity = playerMatchStatMapper.mapFrom(dto);
+        if (dto.getMatchId() != null) {
+            MatchEntity matchEntity = matchRepository.findById(dto.getMatchId())
+                    .orElseThrow(() -> new EntityNotFoundException("Match not found"));
+           entity.setMatch(matchEntity);
+        }
+        if (dto.getTeamId() != null) {
+            TeamEntity teamEntity = teamRepository.findById(dto.getTeamId())
+                    .orElseThrow(() -> new EntityNotFoundException("Team not found"));
+            entity.setTeam(teamEntity);
+        }
+
         PlayerMatchStatEntity saved = playerMatchStatRepository.save(entity);
         return playerMatchStatMapper.mapTo(saved);
     }
