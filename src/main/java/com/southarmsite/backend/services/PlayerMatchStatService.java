@@ -1,5 +1,6 @@
 package com.southarmsite.backend.services;
 
+import com.southarmsite.backend.domain.dto.POTMDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 
@@ -11,4 +12,5 @@ public interface PlayerMatchStatService {
 
     List<PlayerMatchStatDto> findAll();
 
+    List<POTMDto> findTopPOTM();
 }

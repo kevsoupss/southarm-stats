@@ -136,7 +136,7 @@ public class MatchControllerIntegrationTest {
     }
 
     @Test
-    public void testThatGetRecentMatchResultsReturns200() throws Exception {
+    public void testThatGetRecentMatchResultsReturnsCorrectData() throws Exception {
         MatchDto savedMatch = matchService.createMatch(testMatchDtoA);
 
         PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA(savedMatch.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());

@@ -21,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.southarmsite.backend.TestDataUtil.*;
@@ -43,6 +44,7 @@ public class PlayerMatchStatControllerIntegrationTest {
     private TeamDto testTeamDtoA;
     private TeamDto testTeamDtoB;
     private MatchDto testMatchDtoA;
+    private MatchDto testMatchDtoB;
 
     @Autowired
     public PlayerMatchStatControllerIntegrationTest(
@@ -69,6 +71,7 @@ public class PlayerMatchStatControllerIntegrationTest {
         testTeamDtoB = teamService.createTeam(createTestTeamDtoB(createMatchPlayerDto(testPlayerDtoB)));
 
         testMatchDtoA = matchService.createMatch(createTestMatchDtoA(testTeamDtoA, testTeamDtoB));
+        testMatchDtoB = matchService.createMatch(createTestMatchDtoA(testTeamDtoA, testTeamDtoB));
     }
 
     @Test
@@ -130,6 +133,29 @@ public class PlayerMatchStatControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$[0].goals").value(statDto.getGoals())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].player.firstName").value("Kevin")
-        );
+        ).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void testThatTopPOTMReturnsList() throws Exception {
+        PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        statDtoA.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoA);
+        statDtoB.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoB);
+        statDtoC.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoC);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-match-stats/potm")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Kevin Lei")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].potm").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].name").value("Ronald Lam")
+        ).andDo(MockMvcResultHandlers.print());
     }
 }

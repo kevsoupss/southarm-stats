@@ -1,6 +1,7 @@
 package com.southarmsite.backend.controllers;
 
 
+import com.southarmsite.backend.domain.dto.POTMDto;
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 import com.southarmsite.backend.services.PlayerMatchStatService;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,13 @@ public class PlayerMatchStatController {
     }
 
     @GetMapping(path = "/player-match-stats")
-    public List<PlayerMatchStatDto> listAllPlayerMatchStats() {
-        return playerMatchStatService.findAll();
+    public ResponseEntity<List<PlayerMatchStatDto>> listAllPlayerMatchStats() {
+        return ResponseEntity.ok(playerMatchStatService.findAll());
+    }
+
+    @GetMapping(path = "/player-match-stats/potm")
+    public ResponseEntity<List<POTMDto>> listTopPOTM() {
+        List<POTMDto> topPOTM = playerMatchStatService.findTopPOTM();
+        return ResponseEntity.ok(topPOTM);
     }
 }

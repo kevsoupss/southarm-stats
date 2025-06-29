@@ -1,5 +1,6 @@
 package com.southarmsite.backend.services.impl;
 
+import com.southarmsite.backend.domain.dto.POTMDto;
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
@@ -61,6 +62,15 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
                 .stream(playerMatchStatRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
         return statList.stream().map(playerMatchStatMapper::mapTo).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<POTMDto> findTopPOTM() {
+        List<POTMDto> topPOTM = StreamSupport
+                .stream(playerMatchStatRepository.findTopPOTM().spliterator(), false)
+                .limit(5)
+                .collect(Collectors.toList());
+        return topPOTM;
     }
 
 }
