@@ -199,7 +199,7 @@ public final class TestDataUtil {
                 .matchId(matchId)
                 .teamId(teamId)
                 .potm(true)
-                .dotm(false)
+                .dotm(true)
                 .build();
     }
 
@@ -212,7 +212,7 @@ public final class TestDataUtil {
                 .matchId(matchId)
                 .teamId(teamId)
                 .potm(true)
-                .dotm(false)
+                .dotm(true)
                 .build();
     }
 

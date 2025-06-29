@@ -158,4 +158,27 @@ public class PlayerMatchStatControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$[1].name").value("Ronald Lam")
         ).andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void testThatTopDOTMReturnsList() throws Exception {
+        PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoA(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        statDtoA.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoA);
+        statDtoB.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoB);
+        statDtoC.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoC);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-match-stats/dotm")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Ronald Lam")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].dotm").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].name").value("Kevin Lei")
+        ).andDo(MockMvcResultHandlers.print());
+    }
 }

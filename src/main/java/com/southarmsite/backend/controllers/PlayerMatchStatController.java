@@ -1,6 +1,7 @@
 package com.southarmsite.backend.controllers;
 
 
+import com.southarmsite.backend.domain.dto.DOTMDto;
 import com.southarmsite.backend.domain.dto.POTMDto;
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 import com.southarmsite.backend.services.PlayerMatchStatService;
@@ -36,5 +37,11 @@ public class PlayerMatchStatController {
     public ResponseEntity<List<POTMDto>> listTopPOTM() {
         List<POTMDto> topPOTM = playerMatchStatService.findTopPOTM();
         return ResponseEntity.ok(topPOTM);
+    }
+
+    @GetMapping(path = "/player-match-stats/dotm")
+    public ResponseEntity<List<DOTMDto>> listTopDOTM() {
+        List<DOTMDto> topDOTM = playerMatchStatService.findTopDOTM();
+        return ResponseEntity.ok(topDOTM);
     }
 }

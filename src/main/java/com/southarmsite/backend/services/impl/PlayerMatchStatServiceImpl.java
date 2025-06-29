@@ -1,5 +1,6 @@
 package com.southarmsite.backend.services.impl;
 
+import com.southarmsite.backend.domain.dto.DOTMDto;
 import com.southarmsite.backend.domain.dto.POTMDto;
 import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
@@ -71,6 +72,15 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
                 .limit(5)
                 .collect(Collectors.toList());
         return topPOTM;
+    }
+
+    @Override
+    public List<DOTMDto> findTopDOTM() {
+        List<DOTMDto> topDOTM = StreamSupport
+                .stream(playerMatchStatRepository.findTopDOTM().spliterator(), false)
+                .limit(5)
+                .collect(Collectors.toList());
+        return topDOTM;
     }
 
 }
