@@ -137,7 +137,7 @@ public class PlayerMatchStatControllerIntegrationTest {
     }
 
     @Test
-    public void testThatTopPOTMReturnsList() throws Exception {
+    public void testThatFindTopPOTMReturnsList() throws Exception {
         PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
         PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
         PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
@@ -160,7 +160,7 @@ public class PlayerMatchStatControllerIntegrationTest {
     }
 
     @Test
-    public void testThatTopDOTMReturnsList() throws Exception {
+    public void testThatFindTopDOTMReturnsList() throws Exception {
         PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoA.getTeamId());
         PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
         PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoA(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
@@ -181,4 +181,52 @@ public class PlayerMatchStatControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$[1].name").value("Kevin Lei")
         ).andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void testThatFindTopWinrateReturnsList() throws Exception {
+        PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        statDtoA.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoA);
+        statDtoB.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoB);
+        statDtoC.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoC);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-match-stats/winrates")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Kevin Lei")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].winrate").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].wins").value("1")
+        ).andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void testThatFindTopScorerReturnsList() throws Exception {
+        PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        statDtoA.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoA);
+        statDtoB.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoB);
+        statDtoC.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoC);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-match-stats/scorers")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Ronald Lam")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].goals").value(3)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].wins").value("1")
+        ).andDo(MockMvcResultHandlers.print());
+    }
+
+
 }

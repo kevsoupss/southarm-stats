@@ -1,9 +1,7 @@
 package com.southarmsite.backend.controllers;
 
 
-import com.southarmsite.backend.domain.dto.DOTMDto;
-import com.southarmsite.backend.domain.dto.POTMDto;
-import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
+import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.services.PlayerMatchStatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,4 +42,18 @@ public class PlayerMatchStatController {
         List<DOTMDto> topDOTM = playerMatchStatService.findTopDOTM();
         return ResponseEntity.ok(topDOTM);
     }
+
+    @GetMapping(path= "/player-match-stats/winrates")
+    public ResponseEntity<List<WinrateDto>> listTopWinrate() {
+        List<WinrateDto> topWinrate = playerMatchStatService.findTopWinrate();
+        return ResponseEntity.ok(topWinrate);
+    }
+
+    @GetMapping(path="/player-match-stats/scorers")
+    public ResponseEntity<List<ScorerDto>> listTopScorer() {
+        List<ScorerDto> topScorer = playerMatchStatService.findTopScorer();
+        return ResponseEntity.ok(topScorer);
+    }
+
+
 }

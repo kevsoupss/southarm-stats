@@ -18,7 +18,7 @@ import java.util.List;
 public class PlayerEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "player_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "player_id")
     private Integer playerId;
 

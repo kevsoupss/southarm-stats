@@ -1,9 +1,6 @@
 package com.southarmsite.backend.services;
 
-import com.southarmsite.backend.domain.dto.DOTMDto;
-import com.southarmsite.backend.domain.dto.POTMDto;
-import com.southarmsite.backend.domain.dto.PlayerDto;
-import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
+import com.southarmsite.backend.domain.dto.*;
 
 
 import java.util.List;
@@ -16,4 +13,8 @@ public interface PlayerMatchStatService {
     List<POTMDto> findTopPOTM();
 
     List<DOTMDto> findTopDOTM();
+
+    List<WinrateDto> findTopWinrate();
+
+    List<ScorerDto> findTopScorer();
 }

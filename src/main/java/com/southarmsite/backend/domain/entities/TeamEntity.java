@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class TeamEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="team_id")
     private Integer teamId;
 

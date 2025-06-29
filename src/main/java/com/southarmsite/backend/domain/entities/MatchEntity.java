@@ -17,7 +17,7 @@ import java.util.List;
 public class MatchEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "match_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="match_id")
     private Integer matchId;
 
