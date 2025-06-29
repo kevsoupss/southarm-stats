@@ -17,7 +17,7 @@ public class PlayerMatchStatDto {
 
     private Integer playerMatchStatId;
 
-    private PlayerDto player;
+    private MatchPlayerDto player;
 
     private Integer goals;
 

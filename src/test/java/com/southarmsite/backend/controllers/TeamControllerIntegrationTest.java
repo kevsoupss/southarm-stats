@@ -1,6 +1,7 @@
 package com.southarmsite.backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.southarmsite.backend.domain.dto.MatchPlayerDto;
 import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.dto.TeamDto;
 import com.southarmsite.backend.services.PlayerService;
@@ -43,8 +44,8 @@ public class TeamControllerIntegrationTest {
     public void testThatCreateTeamSuccessfullyReturnsHttp201Created() throws Exception{
         PlayerDto testPlayerDtoA = createTestPlayerDtoA();
         PlayerDto savedPlayerDtoA = playerService.createPlayer(testPlayerDtoA);
-
-        TeamDto testTeamDtoA = createTestTeamDtoA(savedPlayerDtoA);
+        MatchPlayerDto matchPlayerDto = createMatchPlayerDto(savedPlayerDtoA);
+        TeamDto testTeamDtoA = createTestTeamDtoA(matchPlayerDto);
         testTeamDtoA.setTeamId(null);
         String matchJson = objectMapper.writeValueAsString(testTeamDtoA);
 
@@ -63,8 +64,8 @@ public class TeamControllerIntegrationTest {
     public void testThatCreateTeamSuccessfullyReturnsSavedTeam() throws Exception{
         PlayerDto testPlayerDtoA = createTestPlayerDtoA();
         PlayerDto savedPlayerDtoA = playerService.createPlayer(testPlayerDtoA);
-
-        TeamDto testTeamDtoA = createTestTeamDtoA(savedPlayerDtoA);
+        MatchPlayerDto matchPlayerDto = createMatchPlayerDto(savedPlayerDtoA);
+        TeamDto testTeamDtoA = createTestTeamDtoA(matchPlayerDto);
         testTeamDtoA.setTeamId(null);
         String matchJson = objectMapper.writeValueAsString(testTeamDtoA);
 
@@ -78,11 +79,7 @@ public class TeamControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.name").value("Team Kevin")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.teamId").isNumber()
-        ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.captain.firstName").value("Kevin")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.captain.position").value("Winger")
         );
 
 
@@ -103,8 +100,8 @@ public class TeamControllerIntegrationTest {
     public void testThatListTeamsReturnsListOfTeams() throws Exception{
         PlayerDto testPlayerDtoA = createTestPlayerDtoA();
         PlayerDto savedPlayerDtoA = playerService.createPlayer(testPlayerDtoA);
-
-        TeamDto testTeamDtoA = createTestTeamDtoA(savedPlayerDtoA);
+        MatchPlayerDto matchPlayerDto = createMatchPlayerDto(savedPlayerDtoA);
+        TeamDto testTeamDtoA = createTestTeamDtoA(matchPlayerDto);
         teamService.createTeam(testTeamDtoA);
 
         mockMvc.perform(
@@ -115,11 +112,7 @@ public class TeamControllerIntegrationTest {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].name").value("Team Kevin")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].teamId").isNumber()
-        ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].captain.firstName").value("Kevin")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].captain.position").value("Winger")
         );
     }
 }

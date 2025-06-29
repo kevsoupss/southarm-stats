@@ -19,6 +19,6 @@ public class TeamDto {
 
     private String name;
 
-    private PlayerDto captain;
+    private MatchPlayerDto captain;
 
 }

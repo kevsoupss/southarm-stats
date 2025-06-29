@@ -152,14 +152,14 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static TeamDto createTestTeamDtoA(PlayerDto captain) {
+    public static TeamDto createTestTeamDtoA(MatchPlayerDto captain) {
         return TeamDto.builder()
                 .name("Team Kevin")
                 .captain(captain)
                 .build();
     }
 
-    public static TeamDto createTestTeamDtoB(PlayerDto captain) {
+    public static TeamDto createTestTeamDtoB(MatchPlayerDto captain) {
         return TeamDto.builder()
                 .name("Team Ronald")
                 .captain(captain)
@@ -190,9 +190,9 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static PlayerMatchStatDto createTestPlayerMatchStatDtoA(Integer matchId, PlayerDto playerDto, Integer teamId) {
+    public static PlayerMatchStatDto createTestPlayerMatchStatDtoA(Integer matchId, MatchPlayerDto matchPlayerDto, Integer teamId) {
         return PlayerMatchStatDto.builder()
-                .player(playerDto)
+                .player(matchPlayerDto)
                 .goals(1)
                 .assists(1)
                 .won(false)
@@ -203,9 +203,9 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static PlayerMatchStatDto createTestPlayerMatchStatDtoB(Integer matchId, PlayerDto playerDto, Integer teamId) {
+    public static PlayerMatchStatDto createTestPlayerMatchStatDtoB(Integer matchId, MatchPlayerDto matchPlayerDto, Integer teamId) {
         return PlayerMatchStatDto.builder()
-                .player(playerDto)
+                .player(matchPlayerDto)
                 .goals(2)
                 .assists(1)
                 .won(true)
@@ -216,11 +216,13 @@ public final class TestDataUtil {
                 .build();
     }
 
-    public static MatchPlayerDto createTestPlayerSummaryDtoA() {
+    public static MatchPlayerDto createMatchPlayerDto(PlayerDto playerDto) {
         return MatchPlayerDto.builder()
-                .firstName("Joe")
-                .lastName("Jeff")
-                .playerId(1)
+                .firstName(playerDto.getFirstName())
+                .lastName(playerDto.getLastName())
+                .playerId(playerDto.getPlayerId())
                 .build();
     }
+
+
 }

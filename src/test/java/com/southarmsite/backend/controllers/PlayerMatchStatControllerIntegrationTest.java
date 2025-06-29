@@ -63,17 +63,17 @@ public class PlayerMatchStatControllerIntegrationTest {
     @BeforeEach
     public void setUp() {
         testPlayerDtoA = playerService.createPlayer(createTestPlayerDtoA());
-        testTeamDtoA = teamService.createTeam(createTestTeamDtoA(testPlayerDtoA));
+        testTeamDtoA = teamService.createTeam(createTestTeamDtoA(createMatchPlayerDto(testPlayerDtoA)));
 
         testPlayerDtoB = playerService.createPlayer(createTestPlayerDtoB());
-        testTeamDtoB = teamService.createTeam(createTestTeamDtoB(testPlayerDtoB));
+        testTeamDtoB = teamService.createTeam(createTestTeamDtoB(createMatchPlayerDto(testPlayerDtoB)));
 
         testMatchDtoA = matchService.createMatch(createTestMatchDtoA(testTeamDtoA, testTeamDtoB));
     }
 
     @Test
     public void testThatCreatePlayerMatchStatReturns201() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(),createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
         statDto.setPlayerMatchStatId(null);
         String json = objectMapper.writeValueAsString(statDto);
 
@@ -88,7 +88,7 @@ public class PlayerMatchStatControllerIntegrationTest {
 
     @Test
     public void testThatCreatePlayerMatchStatReturnsSavedStat() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
         statDto.setPlayerMatchStatId(null);
         String json = objectMapper.writeValueAsString(statDto);
 
@@ -117,7 +117,7 @@ public class PlayerMatchStatControllerIntegrationTest {
 
     @Test
     public void testThatListPlayerMatchStatsReturnsList() throws Exception {
-        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), testPlayerDtoA, testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDto = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
         statDto.setPlayerMatchStatId(null);
         playerMatchStatService.createPlayerMatchStat(statDto);
 

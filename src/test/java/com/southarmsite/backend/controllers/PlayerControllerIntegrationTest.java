@@ -2,10 +2,7 @@ package com.southarmsite.backend.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.southarmsite.backend.domain.dto.MatchDto;
-import com.southarmsite.backend.domain.dto.PlayerDto;
-import com.southarmsite.backend.domain.dto.PlayerMatchStatDto;
-import com.southarmsite.backend.domain.dto.TeamDto;
+import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.services.MatchService;
 import com.southarmsite.backend.services.PlayerMatchStatService;
@@ -124,22 +121,24 @@ public class PlayerControllerIntegrationTest {
     @Test
     public void testThatListPlayerMatchStatReturnsListOfPlayerStatDto() throws Exception{
         PlayerDto playerA = playerService.createPlayer(createTestPlayerDtoA());
-        TeamDto teamA = teamService.createTeam(createTestTeamDtoA(playerA));
+        MatchPlayerDto matchPlayerDtoA = createMatchPlayerDto(playerA);
+        TeamDto teamA = teamService.createTeam(createTestTeamDtoA(matchPlayerDtoA));
 
-        PlayerDto playerB = playerService.createPlayer(createTestPlayerDtoB());
-        TeamDto teamB = teamService.createTeam(createTestTeamDtoB(playerB));
+        PlayerDto playerB = playerService.createPlayer(createTestPlayerDtoA());
+        MatchPlayerDto matchPlayerDtoB = createMatchPlayerDto(playerB);
+        TeamDto teamB = teamService.createTeam(createTestTeamDtoA(matchPlayerDtoB));
 
         MatchDto matchA = matchService.createMatch(createTestMatchDtoA(teamA, teamB));
         MatchDto matchB = matchService.createMatch(createTestMatchDtoB(teamA, teamB));
 
-        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA( matchA.getMatchId(),playerA, teamA.getTeamId());
+        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA( matchA.getMatchId(),matchPlayerDtoA, teamA.getTeamId());
         statService.createPlayerMatchStat(statA);
 
-        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(matchA.getMatchId(),playerB, teamB.getTeamId());
+        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(matchA.getMatchId(),matchPlayerDtoB, teamB.getTeamId());
         statService.createPlayerMatchStat(statB);
 
-        PlayerMatchStatDto statC = createTestPlayerMatchStatDtoA( matchB.getMatchId(),playerA, teamA.getTeamId());
-        statService.createPlayerMatchStat(statA);
+        PlayerMatchStatDto statC = createTestPlayerMatchStatDtoA( matchB.getMatchId(), matchPlayerDtoA, teamA.getTeamId());
+        statService.createPlayerMatchStat(statC);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/player-stats")
                         .contentType(MediaType.APPLICATION_JSON)
