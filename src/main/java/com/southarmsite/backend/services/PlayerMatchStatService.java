@@ -17,4 +17,6 @@ public interface PlayerMatchStatService {
     List<WinrateDto> findTopWinrate();
 
     List<ScorerDto> findTopScorer();
+
+    List<WinStreakDto> findTopWinStreakers();
 }

@@ -98,4 +98,12 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
                 .collect(Collectors.toList());
         return topScorer;
     }
+
+    public List<WinStreakDto> findTopWinStreakers() {
+        List<WinStreakDto> topWinStreakers = StreamSupport
+                .stream(playerMatchStatRepository.getTop5WinStreakers().spliterator(), false)
+                .limit(5)
+                .collect(Collectors.toList());
+        return topWinStreakers;
+    }
 }

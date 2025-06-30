@@ -1,9 +1,6 @@
 package com.southarmsite.backend.repositories;
 
-import com.southarmsite.backend.domain.dto.DOTMDto;
-import com.southarmsite.backend.domain.dto.POTMDto;
-import com.southarmsite.backend.domain.dto.ScorerDto;
-import com.southarmsite.backend.domain.dto.WinrateDto;
+import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -77,4 +74,35 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     ORDER BY SUM(mp.goals) DESC
     """)
     List<ScorerDto> findTopScorer();
+
+    @Query(value = """
+    WITH player_streaks AS (
+        SELECT 
+            p.player_id,
+            CONCAT(p.first_name, ' ', p.last_name) as player_name,
+            p.position,
+            (
+                SELECT COUNT(*)
+                FROM player_match_stat pms2
+                JOIN match m2 ON pms2.match_id = m2.match_id
+                WHERE pms2.player_id = p.player_id
+                AND pms2.won = true
+                AND NOT EXISTS (
+                    SELECT 1 FROM player_match_stat pms3
+                    JOIN match m3 ON pms3.match_id = m3.match_id
+                    WHERE pms3.player_id = p.player_id
+                    AND m3.date > m2.date
+                    AND pms3.won = false
+                )
+            ) as current_streak
+        FROM player p
+        WHERE EXISTS (SELECT 1 FROM player_match_stat pms WHERE pms.player_id = p.player_id)
+    )
+    SELECT player_name as name, current_streak as winStreak, position
+    FROM player_streaks
+    WHERE current_streak > 0
+    ORDER BY current_streak DESC
+    LIMIT 5
+    """, nativeQuery = true)
+    List<WinStreakDto> getTop5WinStreakers();
 }

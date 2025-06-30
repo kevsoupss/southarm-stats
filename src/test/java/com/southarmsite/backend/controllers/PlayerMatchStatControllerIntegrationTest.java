@@ -228,5 +228,32 @@ public class PlayerMatchStatControllerIntegrationTest {
         ).andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void testThatFindTopWinStreakersReturnsList() throws Exception {
+        PlayerMatchStatDto statDtoA = createTestPlayerMatchStatDtoA(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statDtoB = createTestPlayerMatchStatDtoB(testMatchDtoA.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoC = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statDtoD = createTestPlayerMatchStatDtoB(testMatchDtoB.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoB.getTeamId());
+        statDtoA.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoA);
+        statDtoB.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoB);
+        statDtoC.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoC);
+        statDtoD.setPlayerMatchStatId(null);
+        playerMatchStatService.createPlayerMatchStat(statDtoD);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/player-match-stats/winstreaks")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Kevin Lei")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].winStreak").value(2)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[1].winStreak").value(1)
+        ).andDo(MockMvcResultHandlers.print());
+    }
+
+
 
 }
