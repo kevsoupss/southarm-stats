@@ -135,27 +135,37 @@ public class MatchControllerIntegrationTest {
         );
     }
 
+
     @Test
-    public void testThatGetRecentMatchResultsReturnsCorrectData() throws Exception {
+    public void testThatGetAllMatchesReturnsCorrectData() throws Exception {
         MatchDto savedMatch = matchService.createMatch(testMatchDtoA);
 
-        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA(savedMatch.getMatchId(), createMatchPlayerDto(testPlayerDtoA), testTeamDtoA.getTeamId());
+        PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA(
+                savedMatch.getMatchId(),
+                createMatchPlayerDto(testPlayerDtoA),
+                testTeamDtoA.getTeamId()
+        );
         statService.createPlayerMatchStat(statA);
 
-        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(savedMatch.getMatchId(), createMatchPlayerDto(testPlayerDtoB), testTeamDtoB.getTeamId());
+        PlayerMatchStatDto statB = createTestPlayerMatchStatDtoB(
+                savedMatch.getMatchId(),
+                createMatchPlayerDto(testPlayerDtoB),
+                testTeamDtoB.getTeamId()
+        );
         statService.createPlayerMatchStat(statB);
 
+
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/matches/recent")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                MockMvcResultMatchers.status().isOk()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].teamA").value(testTeamDtoA.getName())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].scoreA").isNumber()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].playerStats[0].player.firstName").value("Kevin")
-        ).andDo(MockMvcResultHandlers.print());
+                        MockMvcRequestBuilders.get("/matches/data")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].matchId").value(savedMatch.getMatchId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].teamA").value(testTeamDtoA.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].teamB").value(testTeamDtoB.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].scoreA").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].playersA[0].player.firstName").value(testPlayerDtoA.getFirstName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].playersB[0].player.firstName").value(testPlayerDtoB.getFirstName()))
+                .andDo(MockMvcResultHandlers.print());
     }
 }

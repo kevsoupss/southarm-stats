@@ -13,7 +13,11 @@ import com.southarmsite.backend.repositories.PlayerMatchStatRepository;
 import com.southarmsite.backend.services.MatchService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.MatchResult;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -48,29 +52,35 @@ public class MatchServiceImpl implements MatchService {
         return matchEntityList.stream().map(matchMapper::mapTo).collect(Collectors.toList());
     }
 
+
     @Override
-    public List<MatchResultsDto> getRecentMatches() {
-        List<MatchEntity> recentMatches = matchRepository.findTop5ByOrderByDateDesc();
+    public List<MatchResultsDto> findAllMatchData() {
+        List<MatchResultsDto> matchData = matchRepository.findAllMatchDataWithoutPlayers();
+        for (MatchResultsDto match : matchData) {
+            Integer matchId = match.getMatchId();
+            List<PlayerMatchStatDto> stats = playerMatchStatRepository.findPlayerStatsByMatchId(matchId);
 
-        return recentMatches.stream()
-                .map(match -> {
-                    List<PlayerMatchStatEntity> stats = playerMatchStatRepository.findByMatch(match);
+            List<PlayerMatchStatDto> playersA = stats.stream()
+                    .filter(p -> p.getTeamId().equals(match.getTeamAId()))
+                    .toList();
 
-                    List<PlayerMatchStatDto> statDto = stats.stream().map(playerMatchStatMapper::mapTo).toList();
+            List<PlayerMatchStatDto> playersB = stats.stream()
+                    .filter(p -> p.getTeamId().equals(match.getTeamBId()))
+                    .toList();
 
-                    return MatchResultsDto.builder()
-                            .matchId(match.getMatchId())
-                            .teamA(match.getTeamA().getName())
-                            .teamB(match.getTeamB().getName())
-                            .scoreA(match.getScoreA())
-                            .scoreB(match.getScoreB())
-                            .date(match.getDate().toString())
-                            .location(match.getLocation())
-                            .playerStats(statDto)
-                            .build();
-                }
+            match.setPlayersA(playersA);
+            match.setPlayersB(playersB);
 
+            stats.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getPotm()))
+                    .findFirst()
+                    .ifPresent(p -> match.setPotm(p.getPlayer().getFirstName()));
 
-                ).toList();
+            stats.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getDotm()))
+                    .findFirst()
+                    .ifPresent(p -> match.setDotm(p.getPlayer().getFirstName()));
+        }
+        return matchData;
     }
 }

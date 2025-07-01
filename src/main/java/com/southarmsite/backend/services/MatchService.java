@@ -11,5 +11,5 @@ public interface MatchService {
 
     List<MatchDto> findAll();
 
-    List<MatchResultsDto> getRecentMatches();
+    List<MatchResultsDto> findAllMatchData();
 }

@@ -5,6 +5,7 @@ import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -105,4 +106,27 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     LIMIT 5
     """, nativeQuery = true)
     List<WinStreakDto> getTop5WinStreakers();
+
+
+    @Query("""
+        SELECT new com.southarmsite.backend.domain.dto.PlayerMatchStatDto(
+            p.id,
+            new com.southarmsite.backend.domain.dto.MatchPlayerDto(
+                pl.id,
+                pl.firstName,
+                pl.lastName
+            ),
+            p.goals,
+            p.assists,
+            p.won,
+            p.match.id,
+            p.team.id,
+            p.potm,
+            p.dotm
+        )
+        FROM PlayerMatchStatEntity p
+        JOIN p.player pl
+        WHERE p.match.id = :matchId
+    """)
+    List<PlayerMatchStatDto> findPlayerStatsByMatchId(@Param("matchId") Integer matchId);
 }

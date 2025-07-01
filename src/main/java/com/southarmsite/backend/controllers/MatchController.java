@@ -8,6 +8,7 @@ import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.mappers.Mapper;
 import com.southarmsite.backend.services.MatchService;
 import com.southarmsite.backend.services.PlayerService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,10 @@ public class MatchController {
         return matches;
     }
 
-    @GetMapping(path="/matches/recent")
-    public List<MatchResultsDto> recentMatches() {
-        List<MatchResultsDto> recentMatches = matchService.getRecentMatches();
-        return recentMatches;
+
+    @GetMapping(path="/matches/data")
+    public ResponseEntity<List<MatchResultsDto>> listMatchData() {
+        List<MatchResultsDto> listMatchData = matchService.findAllMatchData();
+        return ResponseEntity.ok(listMatchData);
     }
 }

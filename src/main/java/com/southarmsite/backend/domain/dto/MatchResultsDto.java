@@ -14,15 +14,22 @@ import java.util.List;
 @Builder
 public class MatchResultsDto {
 
+
     private Integer matchId;
     private String teamA;
+    private Integer teamAId;
     private String teamB;
+    private Integer teamBId;
     private Integer scoreA;
     private Integer scoreB;
-    private String date;
+    private LocalDate date;
     private String location;
     private String title;
-
-    private List<PlayerMatchStatDto> playerStats;
+    private String captainA;
+    private String captainB;
+    private List<PlayerMatchStatDto> playersA;
+    private List<PlayerMatchStatDto> playersB;
+    private String potm;
+    private String dotm;
 
 }
