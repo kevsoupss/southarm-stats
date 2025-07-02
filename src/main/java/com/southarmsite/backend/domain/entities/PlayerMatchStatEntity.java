@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class PlayerMatchStatEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="player_match_stat_id")
     private Integer playerMatchStatId;
 

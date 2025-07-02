@@ -17,18 +17,18 @@ import java.util.List;
 public class MatchEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="match_id")
     private Integer matchId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "team_a_id", nullable = false)
     private TeamEntity teamA;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "team_b_id", nullable = false)
     private TeamEntity teamB;
 

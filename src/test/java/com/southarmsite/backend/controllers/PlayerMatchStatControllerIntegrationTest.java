@@ -105,7 +105,7 @@ public class PlayerMatchStatControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$.goals").value(1)
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.player.firstName").value("Kevin")
-        );
+        ).andDo(MockMvcResultHandlers.print());
     }
 
     @Test

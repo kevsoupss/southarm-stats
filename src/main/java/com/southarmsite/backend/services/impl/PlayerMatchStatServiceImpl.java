@@ -85,7 +85,6 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
     public List<WinrateDto> findTopWinrate() {
         List<WinrateDto> topWinrate = StreamSupport
                 .stream(playerMatchStatRepository.findTopWinrate().spliterator(), false)
-                .limit(5)
                 .collect(Collectors.toList());
         return topWinrate;
     }

@@ -1,8 +1,6 @@
 package com.southarmsite.backend.controllers;
 
-import com.southarmsite.backend.domain.dto.MatchDto;
-import com.southarmsite.backend.domain.dto.MatchResultsDto;
-import com.southarmsite.backend.domain.dto.PlayerDto;
+import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.mappers.Mapper;
@@ -42,5 +40,10 @@ public class MatchController {
     public ResponseEntity<List<MatchResultsDto>> listMatchData() {
         List<MatchResultsDto> listMatchData = matchService.findAllMatchData();
         return ResponseEntity.ok(listMatchData);
+    }
+
+    @PostMapping(path="/matches/results")
+    public ResponseEntity<MatchResponseDto> importMatch(@RequestBody MatchPayloadDto payload) {
+        return new ResponseEntity<>(matchService.importMatch(payload), HttpStatus.CREATED);
     }
 }

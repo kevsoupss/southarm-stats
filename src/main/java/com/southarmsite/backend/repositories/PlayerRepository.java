@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<PlayerEntity, Integer> {
@@ -33,6 +34,14 @@ public interface PlayerRepository extends JpaRepository<PlayerEntity, Integer> {
     GROUP BY p.playerId, p.firstName, p.lastName, p.position, p.photoUrl
     ORDER BY p.firstName, p.lastName""")
     List<PlayerStatsDto> findAllPlayersWithStats();
+
+    boolean existsByFirstName(String firstName);
+
+    Optional<PlayerEntity> findByFirstNameAndLastName(String firstName, String lastName);
+
+    Optional<PlayerEntity> findByFirstName(String firstName);
+
+
 
 
 

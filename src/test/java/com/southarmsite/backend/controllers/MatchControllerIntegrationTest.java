@@ -111,7 +111,7 @@ public class MatchControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$.scoreA").value(5)
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.scoreB").value(3)
-        );
+        ).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
