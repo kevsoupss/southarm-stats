@@ -31,6 +31,9 @@ public interface MatchRepository extends JpaRepository<MatchEntity, Integer> {
             "null, " +
             "null, " +
             "null" +
-            ") FROM MatchEntity m")
+            ") " +
+            "FROM MatchEntity m " +
+            "ORDER BY m.date DESC"
+    )
     List<MatchResultsDto> findAllMatchDataWithoutPlayers();
 }

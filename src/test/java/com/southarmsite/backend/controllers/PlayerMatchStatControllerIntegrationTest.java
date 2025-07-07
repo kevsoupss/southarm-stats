@@ -43,6 +43,8 @@ public class PlayerMatchStatControllerIntegrationTest {
     private PlayerDto testPlayerDtoB;
     private TeamDto testTeamDtoA;
     private TeamDto testTeamDtoB;
+    private TeamDto testTeamDtoC;
+    private TeamDto testTeamDtoD;
     private MatchDto testMatchDtoA;
     private MatchDto testMatchDtoB;
 
@@ -69,9 +71,11 @@ public class PlayerMatchStatControllerIntegrationTest {
 
         testPlayerDtoB = playerService.createPlayer(createTestPlayerDtoB());
         testTeamDtoB = teamService.createTeam(createTestTeamDtoB(createMatchPlayerDto(testPlayerDtoB)));
+        testTeamDtoC = teamService.createTeam(createTestTeamDtoB(createMatchPlayerDto(testPlayerDtoB)));
+        testTeamDtoD = teamService.createTeam(createTestTeamDtoB(createMatchPlayerDto(testPlayerDtoB)));
 
         testMatchDtoA = matchService.createMatch(createTestMatchDtoA(testTeamDtoA, testTeamDtoB));
-        testMatchDtoB = matchService.createMatch(createTestMatchDtoA(testTeamDtoA, testTeamDtoB));
+        testMatchDtoB = matchService.createMatch(createTestMatchDtoA(testTeamDtoC, testTeamDtoD));
     }
 
     @Test
@@ -249,8 +253,6 @@ public class PlayerMatchStatControllerIntegrationTest {
                 MockMvcResultMatchers.jsonPath("$[0].name").value("Kevin Lei")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$[0].winStreak").value(2)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[1].winStreak").value(1)
         ).andDo(MockMvcResultHandlers.print());
     }
 

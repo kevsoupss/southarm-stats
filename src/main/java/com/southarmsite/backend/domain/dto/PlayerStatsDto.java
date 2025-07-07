@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +16,7 @@ public class PlayerStatsDto {
         private Integer playerId;
         private String firstName;
         private String lastName;
-        private String position;
+        private List<String> positions;
         private String photoUrl;
         private Long wins;
         private Long losses;

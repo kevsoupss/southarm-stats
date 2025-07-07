@@ -12,7 +12,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")  // allow CORS on all endpoints
-                        .allowedOrigins("http://localhost:8081")  // allow your React app's origin
+                        .allowedOrigins("http://localhost:8000")  // allow your React app's origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // allow HTTP methods
                         .allowedHeaders("*");
             }

@@ -31,7 +31,7 @@ public class PlayerEntity {
     @Column(nullable=false, name="photo_url")
     private String photoUrl;
 
-    @Column(nullable=false, name="position")
-    private String position;
+    @Column(nullable=false, name="positions")
+    private List<String> positions;
 
 }

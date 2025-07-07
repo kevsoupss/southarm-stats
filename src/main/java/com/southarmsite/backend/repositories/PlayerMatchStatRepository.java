@@ -19,7 +19,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     SELECT new com.southarmsite.backend.domain.dto.POTMDto(
         CONCAT(p.firstName, ' ', p.lastName),
         COALESCE(SUM(CASE WHEN mp.potm = true THEN 1 ELSE 0 END), 0),
-        p.position
+        p.positions
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
@@ -33,7 +33,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     SELECT new com.southarmsite.backend.domain.dto.DOTMDto(
         CONCAT(p.firstName, ' ', p.lastName),
         COALESCE(SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END), 0),
-        p.position
+        p.positions
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
@@ -50,14 +50,17 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
         COALESCE(SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END), 0),
         COALESCE(SUM(CASE WHEN mp.won = false THEN 1 ELSE 0 END), 0),
         COALESCE(COUNT(*), 0),
-        p.position
+        p.positions
           
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
     GROUP BY p.id
-    HAVING SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END) > 0
-    ORDER BY SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END)/COUNT(*) DESC
+    HAVING SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END) > 0
+    ORDER BY\s
+        (SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END) * 1.0 / COUNT(*)) *\s
+        POWER(COUNT(*), 0.3) DESC
+    LIMIT 10
     """)
     List<WinrateDto> findTopWinrate();
 
@@ -77,34 +80,55 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     List<ScorerDto> findTopScorer();
 
     @Query(value = """
-    WITH player_streaks AS (
-        SELECT 
-            p.player_id,
-            CONCAT(p.first_name, ' ', p.last_name) as player_name,
-            p.position,
-            (
-                SELECT COUNT(*)
-                FROM player_match_stat pms2
-                JOIN match m2 ON pms2.match_id = m2.match_id
-                WHERE pms2.player_id = p.player_id
-                AND pms2.won = true
-                AND NOT EXISTS (
-                    SELECT 1 FROM player_match_stat pms3
-                    JOIN match m3 ON pms3.match_id = m3.match_id
-                    WHERE pms3.player_id = p.player_id
-                    AND m3.date > m2.date
-                    AND pms3.won = false
-                )
-            ) as current_streak
-        FROM player p
-        WHERE EXISTS (SELECT 1 FROM player_match_stat pms WHERE pms.player_id = p.player_id)
-    )
-    SELECT player_name as name, current_streak as winStreak, position
-    FROM player_streaks
-    WHERE current_streak > 0
-    ORDER BY current_streak DESC
-    LIMIT 5
-    """, nativeQuery = true)
+        WITH player_matches AS (
+                   SELECT 
+                       p.player_id,
+                       CONCAT(p.first_name, ' ', p.last_name) as player_name,
+                       p.positions,
+                       pms.won,
+                       m.date,
+                       ROW_NUMBER() OVER(PARTITION BY p.player_id ORDER BY m.date DESC) as match_rank
+                   FROM player p
+                   JOIN player_match_stat pms ON p.player_id = pms.player_id
+                   JOIN match m ON pms.match_id = m.match_id
+               ),
+               streaks AS (
+                   SELECT 
+                       player_id,
+                       player_name,
+                       positions,
+                       won,
+                       match_rank,
+                       ROW_NUMBER() OVER(PARTITION BY player_id ORDER BY match_rank) - 
+                       ROW_NUMBER() OVER(PARTITION BY player_id, won ORDER BY match_rank) as streak_group
+                   FROM player_matches
+               ),
+               current_streaks AS (
+                   SELECT 
+                       player_id,
+                       player_name,
+                       positions,
+                       CASE 
+                           WHEN won = true AND MIN(match_rank) = 1 THEN COUNT(*)
+                           ELSE 0
+                       END as current_streak
+                   FROM streaks
+                   WHERE streak_group = (
+                       SELECT MIN(s2.streak_group)
+                       FROM streaks s2 
+                       WHERE s2.player_id = streaks.player_id
+                   )
+                   GROUP BY player_id, player_name, positions, won
+               )
+               SELECT 
+                   player_name as name, 
+                   current_streak as winStreak, 
+                   array_to_string(positions, ',') as positions
+               FROM current_streaks
+               WHERE current_streak > 0
+               ORDER BY current_streak DESC
+               LIMIT 5
+""", nativeQuery = true)
     List<WinStreakDto> getTop5WinStreakers();
 
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/players")
 public class PlayerController {
 
     private PlayerService playerService;
@@ -22,21 +23,27 @@ public class PlayerController {
 
     }
 
-    @PostMapping(path = "/players")
+    @PostMapping
     public ResponseEntity<PlayerDto> createPlayer(@RequestBody PlayerDto playerDto) {
         return new ResponseEntity<>(playerService.createPlayer(playerDto), HttpStatus.CREATED);
     }
 
-    @GetMapping(path = "/players")
+    @GetMapping
     public ResponseEntity<List<PlayerDto>> listPlayers() {
         List<PlayerDto> players = playerService.findAll();
         return ResponseEntity.ok(players);
     }
 
-    @GetMapping(path="/player-stats")
+    @GetMapping(path="/stats")
     public ResponseEntity<List<PlayerStatsDto>> listPlayerStats() {
         List<PlayerStatsDto> playerStats = playerService.findAllPlayerStats();
         return ResponseEntity.ok(playerStats);
+    }
+
+    @PostMapping(path = "/payload")
+    public ResponseEntity<List<PlayerDto>> savePlayers(@RequestBody List<PlayerDto> playersPayload) {
+        List<PlayerDto> savedPlayerResponse = playerService.savePlayers(playersPayload);
+        return ResponseEntity.ok(savedPlayerResponse);
     }
 
 }

@@ -127,9 +127,11 @@ public class PlayerControllerIntegrationTest {
         PlayerDto playerB = playerService.createPlayer(createTestPlayerDtoA());
         MatchPlayerDto matchPlayerDtoB = createMatchPlayerDto(playerB);
         TeamDto teamB = teamService.createTeam(createTestTeamDtoA(matchPlayerDtoB));
+        TeamDto teamC = teamService.createTeam(createTestTeamDtoA(matchPlayerDtoA));
+        TeamDto teamD = teamService.createTeam(createTestTeamDtoA(matchPlayerDtoB));
 
         MatchDto matchA = matchService.createMatch(createTestMatchDtoA(teamA, teamB));
-        MatchDto matchB = matchService.createMatch(createTestMatchDtoB(teamA, teamB));
+        MatchDto matchB = matchService.createMatch(createTestMatchDtoB(teamC, teamD));
 
         PlayerMatchStatDto statA = createTestPlayerMatchStatDtoA( matchA.getMatchId(),matchPlayerDtoA, teamA.getTeamId());
         statService.createPlayerMatchStat(statA);
@@ -140,7 +142,7 @@ public class PlayerControllerIntegrationTest {
         PlayerMatchStatDto statC = createTestPlayerMatchStatDtoA( matchB.getMatchId(), matchPlayerDtoA, teamA.getTeamId());
         statService.createPlayerMatchStat(statC);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/player-stats")
+                MockMvcRequestBuilders.get("/players/stats")
                         .contentType(MediaType.APPLICATION_JSON)
 
         ).andDo(MockMvcResultHandlers.print()

@@ -14,4 +14,5 @@ public interface PlayerService {
 
     List<PlayerStatsDto> findAllPlayerStats();
 
+    List<PlayerDto> savePlayers(List<PlayerDto> playersPayload);
 }

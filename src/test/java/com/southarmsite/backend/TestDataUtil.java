@@ -7,6 +7,7 @@ import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
 import com.southarmsite.backend.domain.entities.TeamEntity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public final class TestDataUtil {
     private TestDataUtil() {
@@ -21,7 +22,7 @@ public final class TestDataUtil {
         return PlayerEntity.builder()
                 .firstName("Kevin")
                 .lastName("Lei")
-                .position("Winger")
+                .positions(List.of("Winger"))
                 .photoUrl("testUrl")
                 .build();
     }
@@ -30,7 +31,7 @@ public final class TestDataUtil {
         return PlayerEntity.builder()
                 .firstName("Ronald")
                 .lastName("Lam")
-                .position("Winger")
+                .positions(List.of("Winger"))
                 .photoUrl("testUrl2")
                 .build();
     }
@@ -39,7 +40,7 @@ public final class TestDataUtil {
         return PlayerEntity.builder()
                 .firstName("Rickey")
                 .lastName("Lam")
-                .position("Striker")
+                .positions(List.of("Striker"))
                 .photoUrl("testUrl3")
                 .build();
     }
@@ -48,7 +49,7 @@ public final class TestDataUtil {
         return PlayerEntity.builder()
                 .firstName("Michael")
                 .lastName("Jeff")
-                .position("Center Midfield")
+                .positions(List.of("Central Midfielder"))
                 .photoUrl("testUrl4")
                 .build();
     }
@@ -138,7 +139,7 @@ public final class TestDataUtil {
         return PlayerDto.builder()
                 .firstName("Kevin")
                 .lastName("Lei")
-                .position("Winger")
+                .positions(List.of("Central Midfielder"))
                 .photoUrl("testUrl")
                 .build();
     }
@@ -147,7 +148,7 @@ public final class TestDataUtil {
         return PlayerDto.builder()
                 .firstName("Ronald")
                 .lastName("Lam")
-                .position("Winger")
+                .positions(List.of("Central Midfielder"))
                 .photoUrl("testUrl")
                 .build();
     }

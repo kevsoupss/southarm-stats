@@ -74,7 +74,6 @@ public class MatchServiceImpl implements MatchService {
 
             match.setPlayersA(playersA);
             match.setPlayersB(playersB);
-
             stats.stream()
                     .filter(p -> Boolean.TRUE.equals(p.getPotm()))
                     .findFirst()
@@ -95,36 +94,40 @@ public class MatchServiceImpl implements MatchService {
         MatchResponseDto responseDto = new MatchResponseDto();
         List<PlayerStatPayloadDto> payloadPlayerMatchStats = payload.getPlayerMatchStats();
         List<MatchPlayerDto> returnedMatchPlayers = new ArrayList<>();
-
+        Optional<PlayerEntity> playerEntity;
         for(PlayerStatPayloadDto player: payloadPlayerMatchStats){
             String firstName = player.getFirstName();
+            firstName = firstName.trim().replaceAll("\\s+", " ");
             String lastName = player.getLastName();
-            Optional<PlayerEntity> playerEntity = playerRepository.findByFirstNameAndLastName(firstName, lastName);
-            if(!playerEntity.isPresent()) {
+            lastName = lastName.trim().replaceAll("\\s+", " ");
+
+            if (lastName != null && !lastName.isEmpty()) {
+                playerEntity = playerRepository.findByFirstNameAndLastName(firstName, lastName);
+            } else {
+                playerEntity = playerRepository.findByFirstName(firstName);
+            }
+
+            if (!playerEntity.isPresent()) {
                 PlayerEntity newPlayer = PlayerEntity
                         .builder()
                         .firstName(firstName)
-                        .lastName(lastName)
+                        .lastName(lastName != null ? lastName : "")
                         .photoUrl("")
-                        .position("")
+                        .positions(List.of(""))
                         .build();
                 PlayerEntity savedPlayer = playerRepository.save(newPlayer);
-                MatchPlayerDto matchPlayerDto = MatchPlayerDto
-                        .builder()
+                returnedMatchPlayers.add(MatchPlayerDto.builder()
                         .playerId(savedPlayer.getPlayerId())
                         .firstName(savedPlayer.getFirstName())
                         .lastName(savedPlayer.getLastName())
-                        .build();
-                returnedMatchPlayers.add(matchPlayerDto);
-
-            } else if(playerEntity.isPresent()){
-                MatchPlayerDto matchPlayerDto = MatchPlayerDto
-                        .builder()
-                        .playerId(playerEntity.get().getPlayerId())
-                        .firstName(playerEntity.get().getFirstName())
-                        .lastName(playerEntity.get().getLastName())
-                        .build();
-                returnedMatchPlayers.add(matchPlayerDto);
+                        .build());
+            } else {
+                PlayerEntity existingPlayer = playerEntity.get();
+                returnedMatchPlayers.add(MatchPlayerDto.builder()
+                        .playerId(existingPlayer.getPlayerId())
+                        .firstName(existingPlayer.getFirstName())
+                        .lastName(existingPlayer.getLastName())
+                        .build());
             }
 
 
@@ -134,19 +137,44 @@ public class MatchServiceImpl implements MatchService {
 
         // create teamEntity
         String captainA = payload.getCaptainA();
-        Optional<PlayerEntity> captainEntityA = playerRepository.findByFirstName(captainA);
-        TeamEntity teamA = TeamEntity
-                .builder()
+        String[] partsA = captainA.trim().split("\\s+", 2);
+        String firstNameA = partsA.length > 0 ? partsA[0].trim().replaceAll("\\s+", " ") : "";
+        String lastNameA = partsA.length > 1 ? partsA[1].trim().replaceAll("\\s+", " ") : "";
+
+        Optional<PlayerEntity> captainEntityA;
+        if (!lastNameA.isEmpty()) {
+            captainEntityA = playerRepository.findByFirstNameAndLastName(firstNameA, lastNameA);
+        } else {
+            captainEntityA = playerRepository.findByFirstName(firstNameA);
+        }
+        if (captainEntityA.isEmpty()) {
+            throw new IllegalArgumentException("Captain not found: " + captainA);
+        }
+
+        TeamEntity teamA = TeamEntity.builder()
                 .name(payload.getTeamA())
                 .captain(captainEntityA.get())
                 .build();
 
         String captainB = payload.getCaptainB();
-        Optional<PlayerEntity> captainEntityB = playerRepository.findByFirstName(captainB);
+        String[] partsB = captainB.trim().split("\\s+", 2);
+        String firstNameB = partsB.length > 0 ? partsB[0].trim().replaceAll("\\s+", " ") : "";
+        String lastNameB = partsB.length > 1 ? partsB[1].trim().replaceAll("\\s+", " ") : "";
+
+        Optional<PlayerEntity> captainEntityB;
+        if (!lastNameB.isEmpty()) {
+            captainEntityB = playerRepository.findByFirstNameAndLastName(firstNameB, lastNameB);
+        } else {
+            captainEntityB = playerRepository.findByFirstName(firstNameB);
+        }
+        if (captainEntityB.isEmpty()) {
+            throw new IllegalArgumentException("Captain not found: " + captainB);
+        }
+
         TeamEntity teamB = TeamEntity.builder()
                 .name(payload.getTeamB())
                 .captain(captainEntityB.get())
-                .build();;
+                .build();
 
         TeamEntity savedTeamA = teamRepository.save(teamA);
         TeamEntity savedTeamB = teamRepository.save(teamB);
@@ -175,19 +203,35 @@ public class MatchServiceImpl implements MatchService {
         responseDto.setMatchId(savedMatchEntity.getMatchId());
 
         // create playerMatchStats
-        for(PlayerStatPayloadDto player: payloadPlayerMatchStats){
+        for (PlayerStatPayloadDto player : payloadPlayerMatchStats) {
             String firstName = player.getFirstName();
+            firstName = firstName.trim().replaceAll("\\s+", " ");
             String lastName = player.getLastName();
+            lastName = lastName.trim().replaceAll("\\s+", " ");
+
+            Optional<PlayerEntity> playerEntityOpt;
+            if (lastName != null && !lastName.isEmpty()) {
+                playerEntityOpt = playerRepository.findByFirstNameAndLastName(firstName, lastName);
+            } else {
+                playerEntityOpt = playerRepository.findByFirstName(firstName);
+            }
+
+            if (playerEntityOpt.isEmpty()) {
+                // Handle player not found, maybe throw or log error
+                throw new IllegalArgumentException("Player not found: " + firstName + " " + lastName);
+            }
+
+            PlayerEntity playerEntityFound = playerEntityOpt.get();
+
             TeamEntity savedTeam;
-            PlayerEntity playerEntity = playerRepository.findByFirstNameAndLastName(firstName, lastName).get();
-            if (player.getTeam() == savedTeamA.getName()) {
+            if (player.getTeam().equals(savedTeamA.getName())) {
                 savedTeam = savedTeamA;
             } else {
                 savedTeam = savedTeamB;
             }
-            PlayerMatchStatEntity playerMatchStatEntity = PlayerMatchStatEntity
-                    .builder()
-                    .player(playerEntity)
+
+            PlayerMatchStatEntity playerMatchStatEntity = PlayerMatchStatEntity.builder()
+                    .player(playerEntityFound)
                     .match(savedMatchEntity)
                     .team(savedTeam)
                     .goals(player.getGoals())
@@ -196,8 +240,9 @@ public class MatchServiceImpl implements MatchService {
                     .potm(player.getPotm())
                     .dotm(player.getDotm())
                     .build();
+
             playerMatchStatRepository.save(playerMatchStatEntity);
-            }
+        }
 
 
         return responseDto;
