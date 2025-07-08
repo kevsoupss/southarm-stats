@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -36,4 +37,6 @@ public interface MatchRepository extends JpaRepository<MatchEntity, Integer> {
             "ORDER BY m.date DESC"
     )
     List<MatchResultsDto> findAllMatchDataWithoutPlayers();
+
+    void deleteByDate(LocalDate date);
 }

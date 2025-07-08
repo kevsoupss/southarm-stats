@@ -8,10 +8,12 @@ import com.southarmsite.backend.services.MatchService;
 import com.southarmsite.backend.services.PlayerService;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,5 +47,11 @@ public class MatchController {
     @PostMapping(path="/matches/results")
     public ResponseEntity<MatchResponseDto> importMatch(@RequestBody MatchPayloadDto payload) {
         return new ResponseEntity<>(matchService.importMatch(payload), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/matches/by-date")
+    public ResponseEntity<?> deleteMatchesByDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        matchService.deleteByDate(date);
+        return ResponseEntity.ok("Matches on " + date + " deleted successfully.");
     }
 }
