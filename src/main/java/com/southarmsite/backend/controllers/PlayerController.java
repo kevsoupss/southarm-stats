@@ -23,6 +23,29 @@ public class PlayerController {
 
     }
 
+    @GetMapping("/id")
+    public ResponseEntity<Integer> getPlayerIdByFullName(
+            @RequestParam String firstName,
+            @RequestParam String lastName) {
+
+        PlayerDto foundPlayer = playerService.findByFirstNameAndLastName(firstName, lastName);
+        if (foundPlayer != null) {
+            return ResponseEntity.ok(foundPlayer.getPlayerId());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/id/by-firstname")
+    public ResponseEntity<Integer> getPlayerIdByFirstName(@RequestParam String firstName) {
+        PlayerDto foundPlayer = playerService.findByFirstName(firstName);
+        if (foundPlayer != null){
+            return ResponseEntity.ok(foundPlayer.getPlayerId());
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+
     @PostMapping
     public ResponseEntity<PlayerDto> createPlayer(@RequestBody PlayerDto playerDto) {
         return new ResponseEntity<>(playerService.createPlayer(playerDto), HttpStatus.CREATED);
@@ -45,5 +68,14 @@ public class PlayerController {
         List<PlayerDto> savedPlayerResponse = playerService.savePlayers(playersPayload);
         return ResponseEntity.ok(savedPlayerResponse);
     }
+
+    @PutMapping("/merge")
+    public ResponseEntity<String> mergePlayers(@RequestParam Integer duplicateId, @RequestParam Integer canonicalId) {
+        playerService.mergePlayers(duplicateId, canonicalId);
+        return ResponseEntity.ok("Players merged successfully");
+    }
+
+
+
 
 }

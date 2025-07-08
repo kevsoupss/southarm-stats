@@ -4,8 +4,11 @@ import com.southarmsite.backend.domain.dto.PlayerDto;
 import com.southarmsite.backend.domain.dto.PlayerStatsDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 import com.southarmsite.backend.mappers.Mapper;
+import com.southarmsite.backend.repositories.PlayerMatchStatRepository;
 import com.southarmsite.backend.repositories.PlayerRepository;
+import com.southarmsite.backend.repositories.TeamRepository;
 import com.southarmsite.backend.services.PlayerService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,11 +23,20 @@ public class PlayerServiceImpl implements PlayerService {
     private PlayerRepository playerRepository;
     private Mapper<PlayerEntity, PlayerDto> playerMapper;
     private final S3Service s3Service;
+    private PlayerMatchStatRepository playerMatchStatRepository;
+    private TeamRepository teamRepository;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, Mapper<PlayerEntity, PlayerDto> playerMapper, S3Service s3Service) {
+    public PlayerServiceImpl(
+            PlayerRepository playerRepository,
+            Mapper<PlayerEntity, PlayerDto> playerMapper,
+            S3Service s3Service,
+            PlayerMatchStatRepository playerMatchStatRepository,
+            TeamRepository teamRepository) {
         this.playerRepository = playerRepository;
         this.playerMapper = playerMapper;
         this.s3Service = s3Service;
+        this.playerMatchStatRepository = playerMatchStatRepository;
+        this.teamRepository = teamRepository;
     }
 
     @Override
@@ -38,6 +50,20 @@ public class PlayerServiceImpl implements PlayerService {
     public List<PlayerDto> findAll() {
         List<PlayerEntity> playerEntityList = StreamSupport.stream(playerRepository.findAll().spliterator(), false).collect(Collectors.toList());
         return playerEntityList.stream().map(playerMapper::mapTo).collect(Collectors.toList());
+    }
+
+    @Override
+    public PlayerDto findByFirstNameAndLastName(String firstName, String lastName) {
+        return playerRepository.findByFirstNameAndLastName(firstName, lastName)
+                .map(playerMapper::mapTo)
+                .orElse(null);
+    }
+
+    @Override
+    public PlayerDto findByFirstName(String firstName) {
+        return playerRepository.findByFirstName(firstName)
+                .map(playerMapper::mapTo)
+                .orElse(null);  // or throw exception, or return Optional<PlayerDto>
     }
 
     @Override
@@ -102,5 +128,15 @@ public class PlayerServiceImpl implements PlayerService {
             }
         }
         return listResponse;
+    }
+
+
+    @Transactional
+    public void mergePlayers(Integer duplicatePlayerId, Integer canonicalPlayerId) {
+        playerMatchStatRepository.updatePlayerReferences(duplicatePlayerId, canonicalPlayerId);
+
+        teamRepository.updateCaptainReference(duplicatePlayerId, canonicalPlayerId);
+
+        playerRepository.deleteById(duplicatePlayerId);
     }
 }

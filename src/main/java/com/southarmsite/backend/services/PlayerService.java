@@ -6,6 +6,7 @@ import com.southarmsite.backend.domain.dto.WinStreakDto;
 import com.southarmsite.backend.domain.entities.PlayerEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PlayerService {
     PlayerDto createPlayer(PlayerDto playerDto);
@@ -15,4 +16,10 @@ public interface PlayerService {
     List<PlayerStatsDto> findAllPlayerStats();
 
     List<PlayerDto> savePlayers(List<PlayerDto> playersPayload);
+
+    PlayerDto findByFirstNameAndLastName(String firstName, String lastName);
+
+    PlayerDto findByFirstName(String firstName);
+
+    void mergePlayers(Integer duplicatePlayerId, Integer canonicalPlayerId);
 }

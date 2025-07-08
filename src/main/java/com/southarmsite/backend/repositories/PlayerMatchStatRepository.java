@@ -4,6 +4,7 @@ import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -153,4 +154,8 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
         WHERE p.match.id = :matchId
     """)
     List<PlayerMatchStatDto> findPlayerStatsByMatchId(@Param("matchId") Integer matchId);
+
+    @Modifying
+    @Query("UPDATE PlayerMatchStatEntity mp SET mp.player.playerId = :canonicalId WHERE mp.player.playerId = :duplicateId")
+    int updatePlayerReferences(@Param("duplicateId") Integer duplicateId, @Param("canonicalId") Integer canonicalId);
 }

@@ -14,6 +14,7 @@ import com.southarmsite.backend.services.MatchService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.stream.Collectors;
@@ -145,6 +146,7 @@ public class MatchServiceImpl implements MatchService {
         if (!lastNameA.isEmpty()) {
             captainEntityA = playerRepository.findByFirstNameAndLastName(firstNameA, lastNameA);
         } else {
+            System.err.println("First name fallback: " + firstNameA);
             captainEntityA = playerRepository.findByFirstName(firstNameA);
         }
         if (captainEntityA.isEmpty()) {
@@ -246,5 +248,11 @@ public class MatchServiceImpl implements MatchService {
 
 
         return responseDto;
+    }
+
+
+    @Override
+    public void deleteByDate(LocalDate date) {
+        matchRepository.deleteByDate(date);
     }
 }
