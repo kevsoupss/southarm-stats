@@ -93,7 +93,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     HAVING SUM(mp.assists) > 0
     ORDER BY SUM(mp.assists) DESC
     """)
-    List<ScorerDto> findTopAssisters();
+    List<AssisterDto> findTopAssisters();
 
     @Query(value = """
         WITH player_matches AS (
