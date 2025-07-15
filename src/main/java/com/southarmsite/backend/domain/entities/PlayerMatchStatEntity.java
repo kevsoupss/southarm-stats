@@ -37,6 +37,9 @@ public class PlayerMatchStatEntity {
     @Column(nullable = false, columnDefinition = "int default 0")
     private Integer assists = 0;
 
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer ownGoals = 0;
+
     @Column(nullable = false)
     private Boolean won;
 
@@ -45,6 +48,8 @@ public class PlayerMatchStatEntity {
 
     @Column(nullable = false)
     private Boolean dotm = false;
+
+
 
 
 }

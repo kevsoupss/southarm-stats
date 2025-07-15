@@ -80,6 +80,21 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     """)
     List<ScorerDto> findTopScorer();
 
+    @Query("""
+    SELECT new com.southarmsite.backend.domain.dto.AssisterDto(
+        CONCAT(p.firstName, ' ', p.lastName),
+        COALESCE(SUM(mp.assists), 0),
+        COALESCE(SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END), 0),
+        COALESCE(SUM(CASE WHEN mp.won = false THEN 1 ELSE 0 END), 0)
+    )
+    FROM PlayerEntity p
+    LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    GROUP BY p.id
+    HAVING SUM(mp.assists) > 0
+    ORDER BY SUM(mp.assists) DESC
+    """)
+    List<ScorerDto> findTopAssisters();
+
     @Query(value = """
         WITH player_matches AS (
                    SELECT 
@@ -143,6 +158,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
             ),
             p.goals,
             p.assists,
+            p.ownGoals,
             p.won,
             p.match.id,
             p.team.id,

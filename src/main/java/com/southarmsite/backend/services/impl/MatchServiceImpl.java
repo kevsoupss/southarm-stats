@@ -241,6 +241,7 @@ public class MatchServiceImpl implements MatchService {
                     .won(player.getWin())
                     .potm(player.getPotm())
                     .dotm(player.getDotm())
+                    .ownGoals(player.getOwnGoals())
                     .build();
 
             playerMatchStatRepository.save(playerMatchStatEntity);

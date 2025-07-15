@@ -18,4 +18,5 @@ public class PlayerStatPayloadDto {
     private Boolean win;
     private Boolean potm;
     private Boolean dotm;
+    private Integer ownGoals;
 }

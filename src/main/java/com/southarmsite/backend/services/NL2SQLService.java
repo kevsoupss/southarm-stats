@@ -4,7 +4,7 @@ import com.southarmsite.backend.domain.dto.QueryResult;
 
 public interface NL2SQLService {
 
-    public QueryResult processNaturalLanguageQuery(String naturalLanguageQuery);
+    QueryResult processNaturalLanguageQuery(String naturalLanguageQuery);
 
 
 }

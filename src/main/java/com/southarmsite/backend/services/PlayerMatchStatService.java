@@ -18,5 +18,11 @@ public interface PlayerMatchStatService {
 
     List<ScorerDto> findTopScorer();
 
+    List<AssisterDto> findTopAssister();
+
     List<WinStreakDto> findTopWinStreakers();
+
+    PlayerMatchStatDto updatePlayerMatchStat(Integer id, PlayerMatchStatDto statDto);
+
+
 }
