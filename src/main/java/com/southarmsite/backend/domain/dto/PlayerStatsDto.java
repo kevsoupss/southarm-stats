@@ -25,5 +25,4 @@ public class PlayerStatsDto {
         private Long matches;
         private Long potm;
         private Long dotm;
-
 }

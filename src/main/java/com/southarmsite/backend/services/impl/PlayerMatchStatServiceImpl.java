@@ -1,5 +1,6 @@
 package com.southarmsite.backend.services.impl;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.southarmsite.backend.domain.dto.*;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import com.southarmsite.backend.domain.entities.PlayerMatchStatEntity;
@@ -98,11 +99,35 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return topScorer;
     }
 
+    @Override
+    public List<AssisterDto> findTopAssister() {
+        List<AssisterDto> topAssister = StreamSupport
+                .stream(playerMatchStatRepository.findTopAssisters().spliterator(), false)
+                .limit(5)
+                .collect(Collectors.toList());
+        return topAssister;
+    }
+
     public List<WinStreakDto> findTopWinStreakers() {
         List<WinStreakDto> topWinStreakers = StreamSupport
                 .stream(playerMatchStatRepository.getTop5WinStreakers().spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topWinStreakers;
+    }
+
+    @Override
+    public PlayerMatchStatDto updatePlayerMatchStat(Integer id, PlayerMatchStatDto statDto) {
+        PlayerMatchStatEntity existingStat = playerMatchStatRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("PlayerMatchStat not found with id: " + id));
+
+        existingStat.setGoals(statDto.getGoals());
+        existingStat.setAssists(statDto.getAssists());
+        existingStat.setPotm(statDto.getPotm());
+        existingStat.setDotm(statDto.getDotm());
+
+        PlayerMatchStatEntity updated = playerMatchStatRepository.save(existingStat);
+
+        return playerMatchStatMapper.mapTo(updated);
     }
 }

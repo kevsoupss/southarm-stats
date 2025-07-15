@@ -29,6 +29,14 @@ public class PlayerMatchStatController {
         return ResponseEntity.ok(playerMatchStatService.findAll());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<PlayerMatchStatDto> updatePlayerMatchStat(
+            @PathVariable Integer id,
+            @RequestBody PlayerMatchStatDto statDto) {
+        PlayerMatchStatDto updatedStat = playerMatchStatService.updatePlayerMatchStat(id, statDto);
+        return ResponseEntity.ok(updatedStat);
+    }
+
     @GetMapping(path = "/potm")
     public ResponseEntity<List<POTMDto>> listTopPOTM() {
         List<POTMDto> topPOTM = playerMatchStatService.findTopPOTM();
@@ -50,6 +58,12 @@ public class PlayerMatchStatController {
     @GetMapping(path="/scorers")
     public ResponseEntity<List<ScorerDto>> listTopScorer() {
         List<ScorerDto> topScorer = playerMatchStatService.findTopScorer();
+        return ResponseEntity.ok(topScorer);
+    }
+
+    @GetMapping(path="/assisters")
+    public ResponseEntity<List<AssisterDto>> listTopAssisters() {
+        List<AssisterDto> topScorer = playerMatchStatService.findTopAssister();
         return ResponseEntity.ok(topScorer);
     }
 

@@ -23,6 +23,8 @@ public class PlayerMatchStatDto {
 
     private Integer assists;
 
+    private Integer ownGoals;
+
     private Boolean won;
 
     private Integer matchId;
@@ -32,4 +34,5 @@ public class PlayerMatchStatDto {
     private Boolean potm;
 
     private Boolean dotm;
+
 }
