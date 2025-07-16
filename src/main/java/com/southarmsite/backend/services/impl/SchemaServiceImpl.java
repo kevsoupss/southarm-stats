@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Table;
 import jakarta.persistence.metamodel.Attribute;
 import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.SingularAttribute;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -45,6 +46,7 @@ public class SchemaServiceImpl implements SchemaService {
 
             schema.append("\n");
         }
+        System.out.println(schema.toString());
 
         return schema.toString();
     }
@@ -63,25 +65,51 @@ public class SchemaServiceImpl implements SchemaService {
 
     private String getColumnInfo(Attribute<?, ?> attribute) {
         String columnName = attribute.getName();
-        String javaType = attribute.getJavaType().getSimpleName();
+        String javaTypeName = attribute.getJavaType().getSimpleName();
+        String sqlDataType = "";
 
-        // Check for @Column annotation
         try {
             Field field = attribute.getJavaMember() instanceof Field ?
                     (Field) attribute.getJavaMember() : null;
 
-            if (field != null && field.isAnnotationPresent(Column.class)) {
-                Column columnAnnotation = field.getAnnotation(Column.class);
-                if (!columnAnnotation.name().isEmpty()) {
-                    columnName = columnAnnotation.name();
+            // Prioritize @Column or @JoinColumn name if present
+            if (field != null) {
+                if (field.isAnnotationPresent(Column.class)) {
+                    Column columnAnnotation = field.getAnnotation(Column.class);
+                    if (!columnAnnotation.name().isEmpty()) {
+                        columnName = columnAnnotation.name();
+                    }
+                } else if (field.isAnnotationPresent(jakarta.persistence.JoinColumn.class)) {
+                    jakarta.persistence.JoinColumn joinColumn = field.getAnnotation(jakarta.persistence.JoinColumn.class);
+                    if (!joinColumn.name().isEmpty()) {
+                        columnName = joinColumn.name();
+                    }
+                    // --- FIX STARTS HERE ---
+                    // For a JoinColumn, the actual SQL type is determined by the
+                    // primary key of the target entity.
+                    EntityType<?> targetEntityType = entityManager.getMetamodel().entity(attribute.getJavaType());
+                    SingularAttribute<?, ?> idAttribute = targetEntityType.getId(targetEntityType.getIdType().getJavaType());
+                    sqlDataType = mapJavaTypeToSQL(idAttribute.getJavaType().getSimpleName());
+                    // --- FIX ENDS HERE ---
                 }
             }
-        } catch (Exception e) {
 
+            // If not a JoinColumn, map based on its own Java type
+            if (sqlDataType.isEmpty()) { // Only map if it hasn't been set by JoinColumn logic
+                sqlDataType = mapJavaTypeToSQL(javaTypeName);
+            }
+
+
+        } catch (Exception e) {
+            // Log the exception, don't just swallow
+            // System.err.println("Error getting column info for " + attribute.getName() + ": " + e.getMessage());
+            // Fallback in case of error
+            sqlDataType = mapJavaTypeToSQL(javaTypeName);
         }
 
-        return columnName + " (" + mapJavaTypeToSQL(javaType) + ")";
+        return columnName + " (" + sqlDataType + ")";
     }
+
     private String getRelationships(EntityType<?> entity) {
         List<String> relationships = new ArrayList<>();
         for (Attribute<?, ?> attribute : entity.getAttributes()) {

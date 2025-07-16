@@ -21,6 +21,11 @@ public class ApiKeyAuthFilter implements Filter {
 
         String method = httpRequest.getMethod();
 
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Skip authentication for GET requests
         if ("GET".equals(method)) {
             chain.doFilter(request, response);

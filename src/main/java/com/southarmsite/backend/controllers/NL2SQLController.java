@@ -22,9 +22,11 @@ public class NL2SQLController {
     }
 
     @PostMapping("/query")
-    public ResponseEntity<QueryResult> processQuery(@RequestBody QueryRequest request) {
+    public ResponseEntity<?> processQuery(@RequestBody QueryRequest request) {
+
         QueryResult result = nl2sqlService.processNaturalLanguageQuery(request.getQuery());
         if (result.isSuccess()) {
+            System.out.println(result);
             return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.badRequest().body(result);

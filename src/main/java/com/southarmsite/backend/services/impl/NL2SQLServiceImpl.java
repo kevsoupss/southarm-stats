@@ -14,9 +14,11 @@ public class NL2SQLServiceImpl implements NL2SQLService {
 
     private LLMService llmService;
     private SchemaService schemaService;
-    public NL2SQLServiceImpl(LLMService llmService, SchemaService schemaService){
+    private QueryExecutionService queryExecutionService;
+    public NL2SQLServiceImpl(LLMService llmService, SchemaService schemaService, QueryExecutionService queryExecutionService){
         this.llmService = llmService;
         this.schemaService = schemaService;
+        this.queryExecutionService = queryExecutionService;
     }
 
     @Override
@@ -25,23 +27,23 @@ public class NL2SQLServiceImpl implements NL2SQLService {
             // Input validation and sanitization
             String sanitizedQuery = sanitizeInputQuery(naturalLanguageQuery);
 
-            // TODO: 2. Generate SQL query from natural language using LLM
+            // Generate SQL query from natural language using LLM
             String generatedSQL = llmService.generateSQL(sanitizedQuery, schemaService.getSchemaAsString());
 
-//            // TODO: 3. Sanitize and validate generated SQL (allow only SELECT)
-//            String validatedSQL = validateAndSanitizeSQL(generatedSQL);
-//
-//            // TODO: 4. Execute SQL query using safe methods
-//            List<Map<String, Object>> queryResults = queryExecutionService.executeQuery(validatedSQL);
-//
-//            // TODO: 5. Generate LLM summary from SQL + results using LLM
-//            String summary = llmService.generateSummary(sanitizedQuery, validatedSQL, queryResults);
-//
-//            // TODO: 6. Build and return QueryResult
+            // Sanitize and validate generated SQL (allow only SELECT)
+            String validatedSQL = validateAndSanitizeSQL(generatedSQL);
+
+            // Execute SQL query using safe methods
+            List<Map<String, Object>> queryResults = queryExecutionService.executeQuery(validatedSQL);
+
+            // Generate LLM summary from SQL + results using LLM
+            String summary = llmService.generateSummary(sanitizedQuery, validatedSQL, queryResults);
+
+            // Build and return QueryResult
             return QueryResult.builder()
                     .originalQuery(naturalLanguageQuery)
                     .generatedSQL(generatedSQL)
-                    //.summary(summary)
+                    .summary(summary)
                     .success(true)
                     .build();
 
@@ -57,4 +59,39 @@ public class NL2SQLServiceImpl implements NL2SQLService {
 
         return query.trim().replaceAll("\\s+", " ");
     }
+
+    public String validateAndSanitizeSQL(String sql) {
+        if (sql == null || sql.trim().isEmpty()) {
+            throw new IllegalArgumentException("SQL string cannot be null or empty.");
+        }
+
+        String trimmed = sql.trim();
+
+        String[] blacklist = {
+                // Comment injection
+                "--", "/*", "*/",
+
+                // Data modification (just in case)
+                "insert", "update", "delete", "drop", "alter", "create", "truncate",
+
+                // Stored procedure execution
+                "exec", "execute", "sp_", "xp_",
+
+                // File operations
+                "load_file", "into outfile", "into dumpfile",
+
+                // System functions that could be misused
+                "openrowset", "opendatasource", "cmdshell"
+        };
+        String lower = trimmed.toLowerCase();
+
+        for (String bad : blacklist) {
+            if (lower.contains(bad)) {
+                throw new IllegalArgumentException("Potentially unsafe SQL content detected: '" + bad + "'");
+            }
+        }
+
+        return trimmed;
+    }
+
 }
