@@ -24,5 +24,6 @@ public interface PlayerMatchStatService {
 
     PlayerMatchStatDto updatePlayerMatchStat(Integer id, PlayerMatchStatDto statDto);
 
+    void evictAllLeaderboardCaches();
 
 }

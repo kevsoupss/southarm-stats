@@ -11,7 +11,9 @@ import com.southarmsite.backend.repositories.PlayerMatchStatRepository;
 import com.southarmsite.backend.repositories.PlayerRepository;
 import com.southarmsite.backend.repositories.TeamRepository;
 import com.southarmsite.backend.services.MatchService;
+import com.southarmsite.backend.services.PlayerMatchStatService;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,19 +31,22 @@ public class MatchServiceImpl implements MatchService {
     private PlayerRepository playerRepository;
     private Mapper<PlayerMatchStatEntity, PlayerMatchStatDto> playerMatchStatMapper;
     private Mapper<MatchEntity, MatchDto> matchMapper;
+    private PlayerMatchStatService playerMatchStatService;
 
     public MatchServiceImpl(MatchRepository matchRepository,
                             PlayerMatchStatRepository playerMatchStatRepository,
                             TeamRepository teamRepository,
                             PlayerRepository playerRepository,
                             Mapper<MatchEntity, MatchDto> matchMapper,
-                            Mapper<PlayerMatchStatEntity, PlayerMatchStatDto> playerMatchStatMapper){
+                            Mapper<PlayerMatchStatEntity, PlayerMatchStatDto> playerMatchStatMapper,
+                            PlayerMatchStatService playerMatchStatService){
         this.matchRepository = matchRepository;
         this.playerMatchStatRepository = playerMatchStatRepository;
         this.matchMapper = matchMapper;
         this.playerMatchStatMapper = playerMatchStatMapper;
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
+        this.playerMatchStatService = playerMatchStatService;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class MatchServiceImpl implements MatchService {
     }
 
 
+    @Cacheable(value= "recentMatches", key="'all'")
     @Override
     public List<MatchResultsDto> findAllMatchData() {
         List<MatchResultsDto> matchData = matchRepository.findAllMatchDataWithoutPlayers();
@@ -246,6 +252,7 @@ public class MatchServiceImpl implements MatchService {
 
             playerMatchStatRepository.save(playerMatchStatEntity);
         }
+        playerMatchStatService.evictAllLeaderboardCaches();
 
 
         return responseDto;

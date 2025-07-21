@@ -11,6 +11,8 @@ import com.southarmsite.backend.repositories.PlayerMatchStatRepository;
 import com.southarmsite.backend.repositories.TeamRepository;
 import com.southarmsite.backend.services.PlayerMatchStatService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,8 +66,10 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return statList.stream().map(playerMatchStatMapper::mapTo).collect(Collectors.toList());
     }
 
+    @Cacheable(value= "topPOTM", key="'all'")
     @Override
     public List<POTMDto> findTopPOTM() {
+        System.out.println("--- Executing findTopPOTM from DB ---");
         List<POTMDto> topPOTM = StreamSupport
                 .stream(playerMatchStatRepository.findTopPOTM().spliterator(), false)
                 .limit(5)
@@ -73,8 +77,10 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return topPOTM;
     }
 
+    @Cacheable(value= "topDOTM", key="'all'")
     @Override
     public List<DOTMDto> findTopDOTM() {
+        System.out.println("--- Executing findTopDOTM from DB ---");
         List<DOTMDto> topDOTM = StreamSupport
                 .stream(playerMatchStatRepository.findTopDOTM().spliterator(), false)
                 .limit(5)
@@ -82,16 +88,20 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return topDOTM;
     }
 
+    @Cacheable(value= "topWinrate", key="'all'")
     @Override
     public List<WinrateDto> findTopWinrate() {
+        System.out.println("--- Executing findTopWR from DB ---");
         List<WinrateDto> topWinrate = StreamSupport
                 .stream(playerMatchStatRepository.findTopWinrate().spliterator(), false)
                 .collect(Collectors.toList());
         return topWinrate;
     }
 
+    @Cacheable(value= "topScorers", key="'all'")
     @Override
     public List<ScorerDto> findTopScorer() {
+        System.out.println("--- Executing findTopScorer from DB ---");
         List<ScorerDto> topScorer = StreamSupport
                 .stream(playerMatchStatRepository.findTopScorer().spliterator(), false)
                 .limit(5)
@@ -99,8 +109,10 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return topScorer;
     }
 
+    @Cacheable(value= "topAssisters", key="'all'")
     @Override
     public List<AssisterDto> findTopAssister() {
+        System.out.println("--- Executing findTopAssister from DB ---");
         List<AssisterDto> topAssister = StreamSupport
                 .stream(playerMatchStatRepository.findTopAssisters().spliterator(), false)
                 .limit(5)
@@ -108,7 +120,10 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         return topAssister;
     }
 
+    @Cacheable(value= "topWinStreakers", key="'all'")
+    @Override
     public List<WinStreakDto> findTopWinStreakers() {
+        System.out.println("--- Executing findTopWinStreaker from DB ---");
         List<WinStreakDto> topWinStreakers = StreamSupport
                 .stream(playerMatchStatRepository.getTop5WinStreakers().spliterator(), false)
                 .limit(5)
@@ -129,5 +144,10 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
         PlayerMatchStatEntity updated = playerMatchStatRepository.save(existingStat);
 
         return playerMatchStatMapper.mapTo(updated);
+    }
+
+    @CacheEvict(value = {"topPOTM", "topDOTM", "topWinrate", "topScorers", "topAssisters", "topWinStreakers", "players", "recentMatches"}, allEntries = true)
+    public void evictAllLeaderboardCaches() {
+        System.out.println("Evicting all leaderboard caches (PlayerMatchStatService)...");
     }
 }
