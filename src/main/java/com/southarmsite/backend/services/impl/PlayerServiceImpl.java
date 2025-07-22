@@ -9,6 +9,8 @@ import com.southarmsite.backend.repositories.PlayerRepository;
 import com.southarmsite.backend.repositories.TeamRepository;
 import com.southarmsite.backend.services.PlayerService;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -66,6 +68,7 @@ public class PlayerServiceImpl implements PlayerService {
                 .orElse(null);  // or throw exception, or return Optional<PlayerDto>
     }
 
+    @Cacheable(value= "players", key="'all'")
     @Override
     public List<PlayerStatsDto> findAllPlayerStats() {
         List<PlayerStatsDto> playerStatsList = playerRepository.findAllPlayersWithStats();
@@ -127,6 +130,7 @@ public class PlayerServiceImpl implements PlayerService {
                 }
             }
         }
+        evictPlayerCaches();
         return listResponse;
     }
 
@@ -138,5 +142,10 @@ public class PlayerServiceImpl implements PlayerService {
         teamRepository.updateCaptainReference(duplicatePlayerId, canonicalPlayerId);
 
         playerRepository.deleteById(duplicatePlayerId);
+    }
+
+    @CacheEvict(value = {"players"}, allEntries = true)
+    public void evictPlayerCaches(){
+        System.out.println("Evicting player cache");
     }
 }

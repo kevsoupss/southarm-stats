@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AssisterDto {
+public class AssisterDto implements Serializable {
     private String name;
     private Long assists;
     private Long wins;
