@@ -14,4 +14,4 @@ I built this project to learn Java Spring Boot, whilst also making an applicatio
 - **Backend:** Java, Spring Boot  
 - **Database:** PostgreSQL  
 - **Caching:** Redis  
-- **Deployment:** Frontend deployed on Vercel at https://southarmstats.vercel.app/, backend deployed on Render, and database deployed on Supabase
+- **Deployment:** Frontend deployed on Vercel at https://southarmstats.vercel.app/, backend deployed on Render, and database hosted on Supabase
