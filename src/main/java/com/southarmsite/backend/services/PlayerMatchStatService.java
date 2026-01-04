@@ -10,17 +10,17 @@ public interface PlayerMatchStatService {
 
     List<PlayerMatchStatDto> findAll();
 
-    List<POTMDto> findTopPOTM();
+    List<POTMDto> findTopPOTM(int season);
 
-    List<DOTMDto> findTopDOTM();
+    List<DOTMDto> findTopDOTM(int season);
 
-    List<WinrateDto> findTopWinrate();
+    List<WinrateDto> findTopWinrate(int season);
 
-    List<ScorerDto> findTopScorer();
+    List<ScorerDto> findTopScorer(int season);
 
-    List<AssisterDto> findTopAssister();
+    List<AssisterDto> findTopAssister(int season);
 
-    List<WinStreakDto> findTopWinStreakers();
+    List<WinStreakDto> findTopWinStreakers(int season);
 
     PlayerMatchStatDto updatePlayerMatchStat(Integer id, PlayerMatchStatDto statDto);
 

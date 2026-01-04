@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Year;
 import java.util.List;
 
 @RestController
@@ -58,8 +59,9 @@ public class PlayerController {
     }
 
     @GetMapping(path="/stats")
-    public ResponseEntity<List<PlayerStatsDto>> listPlayerStats() {
-        List<PlayerStatsDto> playerStats = playerService.findAllPlayerStats();
+    public ResponseEntity<List<PlayerStatsDto>> listPlayerStats(@RequestParam(name = "season", required = false) String season) {
+        int currentSeason = (season != null) ? Integer.parseInt(season) : Year.now().getValue();
+        List<PlayerStatsDto> playerStats = playerService.findAllPlayerStats(currentSeason);
         return ResponseEntity.ok(playerStats);
     }
 

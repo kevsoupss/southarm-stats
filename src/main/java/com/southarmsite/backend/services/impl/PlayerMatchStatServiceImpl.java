@@ -65,52 +65,52 @@ public class PlayerMatchStatServiceImpl implements PlayerMatchStatService {
     }
 
     @Override
-    public List<POTMDto> findTopPOTM() {
+    public List<POTMDto> findTopPOTM(int season) {
         List<POTMDto> topPOTM = StreamSupport
-                .stream(playerMatchStatRepository.findTopPOTM().spliterator(), false)
+                .stream(playerMatchStatRepository.findTopPOTM(season).spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topPOTM;
     }
 
     @Override
-    public List<DOTMDto> findTopDOTM() {
+    public List<DOTMDto> findTopDOTM(int season) {
         List<DOTMDto> topDOTM = StreamSupport
-                .stream(playerMatchStatRepository.findTopDOTM().spliterator(), false)
+                .stream(playerMatchStatRepository.findTopDOTM(season).spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topDOTM;
     }
 
     @Override
-    public List<WinrateDto> findTopWinrate() {
+    public List<WinrateDto> findTopWinrate(int season) {
         List<WinrateDto> topWinrate = StreamSupport
-                .stream(playerMatchStatRepository.findTopWinrate().spliterator(), false)
+                .stream(playerMatchStatRepository.findTopWinrate(season).spliterator(), false)
                 .collect(Collectors.toList());
         return topWinrate;
     }
 
     @Override
-    public List<ScorerDto> findTopScorer() {
+    public List<ScorerDto> findTopScorer(int season) {
         List<ScorerDto> topScorer = StreamSupport
-                .stream(playerMatchStatRepository.findTopScorer().spliterator(), false)
+                .stream(playerMatchStatRepository.findTopScorer(season).spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topScorer;
     }
 
     @Override
-    public List<AssisterDto> findTopAssister() {
+    public List<AssisterDto> findTopAssister(int season) {
         List<AssisterDto> topAssister = StreamSupport
-                .stream(playerMatchStatRepository.findTopAssisters().spliterator(), false)
+                .stream(playerMatchStatRepository.findTopAssisters(season).spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topAssister;
     }
 
-    public List<WinStreakDto> findTopWinStreakers() {
+    public List<WinStreakDto> findTopWinStreakers(int season) {
         List<WinStreakDto> topWinStreakers = StreamSupport
-                .stream(playerMatchStatRepository.getTop5WinStreakers().spliterator(), false)
+                .stream(playerMatchStatRepository.getTop5WinStreakers(season).spliterator(), false)
                 .limit(5)
                 .collect(Collectors.toList());
         return topWinStreakers;

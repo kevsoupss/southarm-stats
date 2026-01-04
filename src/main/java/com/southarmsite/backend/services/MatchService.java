@@ -14,7 +14,7 @@ public interface MatchService {
 
     List<MatchDto> findAll();
 
-    List<MatchResultsDto> findAllMatchData();
+    List<MatchResultsDto> findAllMatchData(int season);
 
     MatchResponseDto importMatch(MatchPayloadDto payload);
 

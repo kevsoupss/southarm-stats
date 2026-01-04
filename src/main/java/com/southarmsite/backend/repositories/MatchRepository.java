@@ -4,6 +4,7 @@ import com.southarmsite.backend.domain.dto.MatchResultsDto;
 import com.southarmsite.backend.domain.entities.MatchEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -34,9 +35,11 @@ public interface MatchRepository extends JpaRepository<MatchEntity, Integer> {
             "null" +
             ") " +
             "FROM MatchEntity m " +
+            "WHERE YEAR(m.date) = :season " +
             "ORDER BY m.date DESC"
     )
-    List<MatchResultsDto> findAllMatchDataWithoutPlayers();
+    List<MatchResultsDto> findAllMatchDataWithoutPlayers(@Param("season") int season);
+
 
     void deleteByDate(LocalDate date);
 }

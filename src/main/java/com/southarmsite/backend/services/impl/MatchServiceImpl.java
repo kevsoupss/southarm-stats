@@ -59,8 +59,8 @@ public class MatchServiceImpl implements MatchService {
 
 
     @Override
-    public List<MatchResultsDto> findAllMatchData() {
-        List<MatchResultsDto> matchData = matchRepository.findAllMatchDataWithoutPlayers();
+    public List<MatchResultsDto> findAllMatchData(int currentSeason) {
+        List<MatchResultsDto> matchData = matchRepository.findAllMatchDataWithoutPlayers(currentSeason);
         for (MatchResultsDto match : matchData) {
             Integer matchId = match.getMatchId();
             List<PlayerMatchStatDto> stats = playerMatchStatRepository.findPlayerStatsByMatchId(matchId);

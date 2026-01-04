@@ -67,8 +67,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerStatsDto> findAllPlayerStats() {
-        List<PlayerStatsDto> playerStatsList = playerRepository.findAllPlayersWithStats();
+    public List<PlayerStatsDto> findAllPlayerStats(int currentSeason) {
+        List<PlayerStatsDto> playerStatsList = playerRepository.findAllPlayersWithStats(currentSeason);
         for (PlayerStatsDto player : playerStatsList) {
             String s3Key = player.getPhotoUrl();
             if (s3Key != null && !s3Key.isEmpty()) {

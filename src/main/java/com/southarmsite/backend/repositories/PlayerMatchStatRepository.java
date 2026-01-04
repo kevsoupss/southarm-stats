@@ -24,11 +24,13 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    LEFT JOIN mp.match m
+    WHERE YEAR(m.date) = :season
     GROUP BY p.id
     HAVING SUM(CASE WHEN mp.potm = true THEN 1 ELSE 0 END) > 0
     ORDER BY SUM(CASE WHEN mp.potm = true THEN 1 ELSE 0 END) DESC
     """)
-    List<POTMDto> findTopPOTM();
+    List<POTMDto> findTopPOTM(@Param("season") int season);
 
     @Query("""
     SELECT new com.southarmsite.backend.domain.dto.DOTMDto(
@@ -38,11 +40,13 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    LEFT JOIN mp.match m
+    WHERE YEAR(m.date) = :season
     GROUP BY p.id
     HAVING SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END) > 0
     ORDER BY SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END) DESC
     """)
-    List<DOTMDto> findTopDOTM();
+    List<DOTMDto> findTopDOTM(@Param("season") int season);
 
     @Query("""
     SELECT new com.southarmsite.backend.domain.dto.WinrateDto(
@@ -56,6 +60,8 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    LEFT JOIN mp.match m
+    WHERE YEAR(m.date) = :season
     GROUP BY p.id
     HAVING SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END) > 0
     ORDER BY\s
@@ -63,7 +69,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
         POWER(COUNT(*), 0.3) DESC
     LIMIT 10
     """)
-    List<WinrateDto> findTopWinrate();
+    List<WinrateDto> findTopWinrate(@Param("season") int season);
 
     @Query("""
     SELECT new com.southarmsite.backend.domain.dto.ScorerDto(
@@ -74,11 +80,13 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    LEFT JOIN mp.match m
+    WHERE YEAR(m.date) = :season
     GROUP BY p.id
     HAVING SUM(mp.goals) > 0
     ORDER BY SUM(mp.goals) DESC
     """)
-    List<ScorerDto> findTopScorer();
+    List<ScorerDto> findTopScorer(@Param("season") int season);
 
     @Query("""
     SELECT new com.southarmsite.backend.domain.dto.AssisterDto(
@@ -89,11 +97,13 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
     )
     FROM PlayerEntity p
     LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+    LEFT JOIN mp.match m
+    WHERE YEAR(m.date) = :season
     GROUP BY p.id
     HAVING SUM(mp.assists) > 0
     ORDER BY SUM(mp.assists) DESC
     """)
-    List<AssisterDto> findTopAssisters();
+    List<AssisterDto> findTopAssisters(@Param("season") int season);
 
     @Query(value = """
         WITH player_matches AS (
@@ -107,6 +117,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
                    FROM player p
                    JOIN player_match_stat pms ON p.player_id = pms.player_id
                    JOIN match m ON pms.match_id = m.match_id
+                   WHERE EXTRACT(YEAR FROM m.date) = :season
                ),
                streaks AS (
                    SELECT 
@@ -145,7 +156,7 @@ public interface PlayerMatchStatRepository extends JpaRepository<PlayerMatchStat
                ORDER BY current_streak DESC
                LIMIT 5
 """, nativeQuery = true)
-    List<WinStreakDto> getTop5WinStreakers();
+    List<WinStreakDto> getTop5WinStreakers(@Param("season") int season);
 
 
     @Query("""

@@ -13,7 +13,7 @@ public interface PlayerService {
 
     List<PlayerDto> findAll();
 
-    List<PlayerStatsDto> findAllPlayerStats();
+    List<PlayerStatsDto> findAllPlayerStats(int currentSeason);
 
     List<PlayerDto> savePlayers(List<PlayerDto> playersPayload);
 

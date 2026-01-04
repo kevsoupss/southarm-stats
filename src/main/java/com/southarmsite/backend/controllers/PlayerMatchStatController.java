@@ -38,38 +38,38 @@ public class PlayerMatchStatController {
     }
 
     @GetMapping(path = "/potm")
-    public ResponseEntity<List<POTMDto>> listTopPOTM() {
-        List<POTMDto> topPOTM = playerMatchStatService.findTopPOTM();
+    public ResponseEntity<List<POTMDto>> listTopPOTM(@RequestParam("season") int season) {
+        List<POTMDto> topPOTM = playerMatchStatService.findTopPOTM(season);
         return ResponseEntity.ok(topPOTM);
     }
 
     @GetMapping(path = "/dotm")
-    public ResponseEntity<List<DOTMDto>> listTopDOTM() {
-        List<DOTMDto> topDOTM = playerMatchStatService.findTopDOTM();
+    public ResponseEntity<List<DOTMDto>> listTopDOTM(@RequestParam("season") int season) {
+        List<DOTMDto> topDOTM = playerMatchStatService.findTopDOTM(season);
         return ResponseEntity.ok(topDOTM);
     }
 
     @GetMapping(path= "/winrates")
-    public ResponseEntity<List<WinrateDto>> listTopWinrate() {
-        List<WinrateDto> topWinrate = playerMatchStatService.findTopWinrate();
+    public ResponseEntity<List<WinrateDto>> listTopWinrate(@RequestParam("season") int season) {
+        List<WinrateDto> topWinrate = playerMatchStatService.findTopWinrate(season);
         return ResponseEntity.ok(topWinrate);
     }
 
     @GetMapping(path="/scorers")
-    public ResponseEntity<List<ScorerDto>> listTopScorer() {
-        List<ScorerDto> topScorer = playerMatchStatService.findTopScorer();
+    public ResponseEntity<List<ScorerDto>> listTopScorer(@RequestParam("season") int season) {
+        List<ScorerDto> topScorer = playerMatchStatService.findTopScorer(season);
         return ResponseEntity.ok(topScorer);
     }
 
     @GetMapping(path="/assisters")
-    public ResponseEntity<List<AssisterDto>> listTopAssisters() {
-        List<AssisterDto> topScorer = playerMatchStatService.findTopAssister();
+    public ResponseEntity<List<AssisterDto>> listTopAssisters(@RequestParam("season") int season) {
+        List<AssisterDto> topScorer = playerMatchStatService.findTopAssister(season);
         return ResponseEntity.ok(topScorer);
     }
 
     @GetMapping(path="/winstreaks")
-    public ResponseEntity<List<WinStreakDto>> listTopWinStreakers() {
-        List<WinStreakDto> topWinStreakers = playerMatchStatService.findTopWinStreakers();
+    public ResponseEntity<List<WinStreakDto>> listTopWinStreakers(@RequestParam("season") int season) {
+        List<WinStreakDto> topWinStreakers = playerMatchStatService.findTopWinStreakers(season);
         return ResponseEntity.ok(topWinStreakers);
     }
 

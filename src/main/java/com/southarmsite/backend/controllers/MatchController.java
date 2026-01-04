@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 
 @RestController
@@ -37,10 +38,10 @@ public class MatchController {
         return matches;
     }
 
-
     @GetMapping(path="/matches/data")
-    public ResponseEntity<List<MatchResultsDto>> listMatchData() {
-        List<MatchResultsDto> listMatchData = matchService.findAllMatchData();
+    public ResponseEntity<List<MatchResultsDto>> listMatchData(@RequestParam(name = "season", required = false) String season) {
+        int currentSeason = (season != null) ? Integer.parseInt(season) : Year.now().getValue();
+        List<MatchResultsDto> listMatchData = matchService.findAllMatchData(currentSeason);
         return ResponseEntity.ok(listMatchData);
     }
 

@@ -15,25 +15,28 @@ import java.util.Optional;
 public interface PlayerRepository extends JpaRepository<PlayerEntity, Integer> {
 
     @Query("""
-    SELECT new com.southarmsite.backend.domain.dto.PlayerStatsDto(
-        p.playerId,
-        p.firstName,
-        p.lastName,
-        p.positions,
-        p.photoUrl,
-        COALESCE(SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(CASE WHEN mp.won = false THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(mp.goals), 0),
-        COALESCE(SUM(mp.assists), 0),
-        COUNT(mp.id),
-        COALESCE(SUM(CASE WHEN mp.potm = true THEN 1 ELSE 0 END), 0),
-        COALESCE(SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END), 0)
-    )
-    FROM PlayerEntity p
-    LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
-    GROUP BY p.playerId, p.firstName, p.lastName, p.positions, p.photoUrl
-    ORDER BY p.firstName, p.lastName""")
-    List<PlayerStatsDto> findAllPlayersWithStats();
+        SELECT new com.southarmsite.backend.domain.dto.PlayerStatsDto(
+            p.playerId,
+            p.firstName,
+            p.lastName,
+            p.positions,
+            p.photoUrl,
+            COALESCE(SUM(CASE WHEN mp.won = true THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN mp.won = false THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(mp.goals), 0),
+            COALESCE(SUM(mp.assists), 0),
+            COUNT(mp.playerMatchStatId),
+            COALESCE(SUM(CASE WHEN mp.potm = true THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN mp.dotm = true THEN 1 ELSE 0 END), 0)
+        )
+        FROM PlayerEntity p
+        LEFT JOIN PlayerMatchStatEntity mp ON mp.player = p
+        LEFT JOIN mp.match m
+        WHERE m IS NULL OR YEAR(m.date) = :season
+        GROUP BY p.playerId, p.firstName, p.lastName, p.positions, p.photoUrl
+        ORDER BY p.firstName, p.lastName
+        """)
+    List<PlayerStatsDto> findAllPlayersWithStats(@Param("season") int season);
 
 
     Optional<PlayerEntity> findByFirstNameAndLastName(String firstName, String lastName);
